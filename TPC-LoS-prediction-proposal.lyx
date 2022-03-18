@@ -5,6 +5,9 @@
 \save_transient_properties true
 \origin unavailable
 \textclass article
+\begin_preamble
+
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -29,6 +32,7 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
 \use_geometry false
@@ -44,6 +48,7 @@
 \use_package undertilde 1
 \cite_engine basic
 \cite_engine_type default
+\biblio_style plain
 \use_bibtopic false
 \use_indices false
 \paperorientation portrait
@@ -88,6 +93,18 @@ your proposal should answer the following questions about your project,
 \begin_inset Newline newline
 \end_inset
 
+Citation to the paper here 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rocheteau2021"
+literal "false"
+
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
 
 \begin_inset Newline newline
 \end_inset
@@ -98,6 +115,10 @@ your proposal should answer the following questions about your project,
  a specific approach is ‘using recurrent neural network and attention mechanism.’
  Do not copy the description in the paper – use your own rewording.
  
+\begin_inset Newline newline
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -116,6 +137,17 @@ It is of great importance to be able to utilize Intensive Care Unit resource
 
 3) What is the new specific approach being taken in this work, and what
  is interesting or innovative about it, in your opinion? 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+The authors propose an approach which combines Temporal Convolutional, Pointwise
+ Convolutional and Skip Connections to achieve better performance than LSTM
+ and Transformer models, which are two strong models we learnt for time
+ series EHR data.
 \begin_inset Newline newline
 \end_inset
 
@@ -146,6 +178,10 @@ g?
 \begin_inset Newline newline
 \end_inset
 
+
+\begin_inset Newline newline
+\end_inset
+
 The paper is using eICU Collaborative Research Database and the Medical
  Information Mart for Intensive Care (MIMIC-IV v0.4) database.
  Therefore, the data sets are available.
@@ -159,6 +195,10 @@ The paper is using eICU Collaborative Research Database and the Medical
 7) Discuss the computational feasibility of your proposed work – make an
  argument that the reproduction will be feasible.
  
+\begin_inset Newline newline
+\end_inset
+
+
 \begin_inset Newline newline
 \end_inset
 
@@ -180,9 +220,13 @@ The author did not state the computation resource for the work.
 \begin_inset Newline newline
 \end_inset
 
-We plan to implement ourselves so that we will be able to learn better the
- ideas behind the work and gain deeper understanding.
- Also, in this way, it will help us to do the potential experiments.
+
+\begin_inset Newline newline
+\end_inset
+
+We plan to re-implement the proposed model ourselves so that we will be
+ able to learn better the ideas behind the work and gain deeper understanding.
+ However, for baseline models, we consider re-use the existing code if needed.
 \begin_inset Newline newline
 \end_inset
 
@@ -190,8 +234,16 @@ We plan to implement ourselves so that we will be able to learn better the
 \begin_inset Newline newline
 \end_inset
 
-The proposal should be a PDF, but can take any form.
- 
+
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "citations"
+options "plain"
+
+\end_inset
+
+
 \end_layout
 
 \end_body

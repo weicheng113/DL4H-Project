@@ -82,6 +82,10 @@
 
 \begin_layout Paragraph*
 1) Citation to the original paper 
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -102,6 +106,10 @@ literal "false"
 
 \begin_layout Paragraph*
 2) What is the general problem this work is trying to do?
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -120,6 +128,10 @@ It is of great importance to be able to utilize Intensive Care Unit resource
 \begin_layout Paragraph*
 3) What is the new specific approach being taken in this work, and what
  is interesting or innovative about it, in your opinion? 
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -138,6 +150,10 @@ The authors propose an approach, Temporal Pointwise Convolution(TPC) model,
 \begin_layout Paragraph*
 4) What are the specific hypotheses from the paper that you plan to verify
  in your reproduction study? 
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -153,6 +169,10 @@ We would like to verify that the proposed TPC model will achieve much better
 \begin_layout Paragraph*
 5) What are the additional ablations you plan to do, and why are they interestin
 g? 
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -177,6 +197,10 @@ The authors have already done thorough ablations to model architecture(Temporal
 \begin_layout Paragraph*
 6) State how you are assured that you have access to the appropriate data.
  
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -193,6 +217,10 @@ The paper is using eICU Collaborative Research Database and the Medical
 7) Discuss the computational feasibility of your proposed work – make an
  argument that the reproduction will be feasible.
  
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -211,6 +239,10 @@ The author did not state the computation resource for the work.
 8) State whether you will re-use existing code (and provide a link to that
  code base) or whether you will implement yourself.
  
+\begin_inset Newline newline
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -219,6 +251,16 @@ We plan to refactor the proposed model(TPC) code so that we will be able
  However, for baseline models, we consider re-use the existing code if needed.
  When time is allowed, we will also consider re-implement the proposed model(TPC
 ) code ourselves.
+ The source code for the paper can be found 
+\begin_inset CommandInset href
+LatexCommand href
+name "here"
+target "https://github.com/EmmaRocheteau/TPC-LoS-prediction"
+literal "false"
+
+\end_inset
+
+.
 \begin_inset Newline newline
 \end_inset
 

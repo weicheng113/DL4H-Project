@@ -45,4 +45,4 @@ The author did not state the computation resource for the work. But we believe i
 
 8) State whether you will re-use existing code (and provide a link to that code base) or whether you will implement yourself. 
 
-We plan to refactor the proposed model(TPC) code so that we will be able to learn better the ideas behind the work and gain deeper understanding. However, for baseline models, we consider re-use the existing code if needed. When time is allowed, we will also consider re-implement the proposed model(TPC) code ourselves.
+We plan to refactor the proposed model(TPC) code so that we will be able to learn better the ideas behind the work and gain deeper understanding. However, for baseline models, we consider re-use the existing code if needed. When time is allowed, we will also consider re-implement the proposed model(TPC) code ourselves. The source code for the paper can be found [here](https://github.com/EmmaRocheteau/TPC-LoS-prediction).

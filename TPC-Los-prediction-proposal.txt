@@ -1,0 +1,48 @@
+1) Citation to the original paper 
+
+The citation to the paper here [#rocheteau2021].
+
+@inproceedings{rocheteau2021,
+author = {Rocheteau, Emma and Li\`{o}, Pietro and Hyland, Stephanie},
+title = {Temporal Pointwise Convolutional Networks for Length of Stay Prediction in the Intensive Care Unit},
+year = {2021},
+isbn = {9781450383592},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3450439.3451860},
+doi = {10.1145/3450439.3451860},
+booktitle = {Proceedings of the Conference on Health, Inference, and Learning},
+pages = {58-68},
+numpages = {11},
+keywords = {intensive care unit, length of stay, temporal convolution, mortality, patient outcome prediction},
+location = {Virtual Event, USA},
+series = {CHIL '21}
+}
+
+2) What is the general problem this work is trying to do?
+
+It is of great importance to be able to utilize Intensive Care Unit resource efficiently in hospitals. One of the central issues in efficient ICU resource allocation is to have more accurate knowledge of how long a patient will stay. Therefore, in this work, the authors propose an more accurate approach for length of stay prediction.
+
+3) What is the new specific approach being taken in this work, and what is interesting or innovative about it, in your opinion? 
+
+The authors propose an approach, Temporal Pointwise Convolution(TPC) model, which combines Temporal Convolutional, Pointwise Convolutional and Skip Connections. It is interesting to learn from paper that achieve better performance than LSTM and Transformer models, which are two strong models we learnt for time series EHR data.
+
+4) What are the specific hypotheses from the paper that you plan to verify in your reproduction study? 
+
+We would like to verify that the proposed TPC model will achieve much better performance than the two strong baseline models, LSTM and Transformer models, given the same input data.
+
+5) What are the additional ablations you plan to do, and why are they interesting? 
+
+The authors have already done thorough ablations to model architecture(Temporal Pointwise Convolution), which includes temporal convolution only, pointwise convolution only, no skip connections and so on. We plan to do the first three to verify the result against the report in the paper. Also temporal convolution and pointwise convolution are the major components for the network, we would like to know their relative importance to the TPC network. Skip connection is useful trick. We are also interested in its contribution to the network. We have not got any new additional ablations to the network. But when we work on the paper, we may come up some.
+
+6) State how you are assured that you have access to the appropriate data. 
+
+The paper is using eICU Collaborative Research Database and the Medical Information Mart for Intensive Care (MIMIC-IV v0.4) database. Therefore, the data sets are available from PhysioNet.
+
+7) Discuss the computational feasibility of your proposed work – make an argument that the reproduction will be feasible. 
+
+The author did not state the computation resource for the work. But we believe it is computational feasible by looking at the size of data sets used(eICU database comprises 200,859 patient unit encounters between 2014 and 2015 and MIMIC-IV database contains 69,619 ICU stays between 2008 and 2019).
+
+8) State whether you will re-use existing code (and provide a link to that code base) or whether you will implement yourself. 
+
+We plan to refactor the proposed model(TPC) code so that we will be able to learn better the ideas behind the work and gain deeper understanding. However, for baseline models, we consider re-use the existing code if needed. When time is allowed, we will also consider re-implement the proposed model(TPC) code ourselves.

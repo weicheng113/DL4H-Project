@@ -80,20 +80,12 @@
 
 \begin_body
 
-\begin_layout Standard
-your proposal should answer the following questions about your project,
- in order to demonstrate you have thought carefully about the paper you
- are planning to duplicate, and in order to communicate your understanding
- of the work and its importance to someone who most likely has not read
- the paper: 
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Paragraph*
 1) Citation to the original paper 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-Citation to the paper here 
+\begin_layout Standard
+The citation to the paper here 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "rocheteau2021"
@@ -106,22 +98,13 @@ literal "false"
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-2) What is the general problem this work is trying to do? We are not asking
- for the specific approach, that’s requested below.
- An example of a general problem is ‘mortality prediction.’ An example of
- a specific approach is ‘using recurrent neural network and attention mechanism.’
- Do not copy the description in the paper – use your own rewording.
- 
-\begin_inset Newline newline
-\end_inset
+\begin_layout Paragraph*
+2) What is the general problem this work is trying to do?
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 It is of great importance to be able to utilize Intensive Care Unit resource
  efficiently in hospitals.
  One of the central issues in efficient ICU resource allocation is to have
@@ -132,76 +115,87 @@ It is of great importance to be able to utilize Intensive Care Unit resource
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Paragraph*
 3) What is the new specific approach being taken in this work, and what
  is interesting or innovative about it, in your opinion? 
+\end_layout
+
+\begin_layout Standard
+The authors propose an approach, Temporal Pointwise Convolution(TPC) model,
+ which combines Temporal Convolutional, Pointwise Convolutional and Skip
+ Connections.
+ It is interesting to learn from paper that achieve better performance than
+ LSTM and Transformer models, which are two strong models we learnt for
+ time series EHR data.
 \begin_inset Newline newline
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-The authors propose an approach which combines Temporal Convolutional, Pointwise
- Convolutional and Skip Connections to achieve better performance than LSTM
- and Transformer models, which are two strong models we learnt for time
- series EHR data.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Paragraph*
 4) What are the specific hypotheses from the paper that you plan to verify
  in your reproduction study? 
+\end_layout
+
+\begin_layout Standard
+We would like to verify that the proposed TPC model will achieve much better
+ performance than the two strong baseline models, LSTM and Transformer models,
+ given the same input data.
 \begin_inset Newline newline
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Paragraph*
 5) What are the additional ablations you plan to do, and why are they interestin
 g? 
+\end_layout
+
+\begin_layout Standard
+The authors have already done thorough ablations to model architecture(Temporal
+ Pointwise Convolution), which includes temporal convolution only, pointwise
+ convolution only, no skip connections and so on.
+ We plan to do the first three to verify the result against the report in
+ the paper.
+ Also temporal convolution and pointwise convolution are the major components
+ for the network, we would like to know their relative importance to the
+ TPC network.
+ Skip connection is useful trick.
+ We are also interested in its contribution to the network.
+ We have not got any new additional ablations to the network.
+ But when we work on the paper, we may come up some.
 \begin_inset Newline newline
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Paragraph*
 6) State how you are assured that you have access to the appropriate data.
  
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 The paper is using eICU Collaborative Research Database and the Medical
  Information Mart for Intensive Care (MIMIC-IV v0.4) database.
- Therefore, the data sets are available.
+ Therefore, the data sets are available from PhysioNet.
 \begin_inset Newline newline
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Paragraph*
 7) Discuss the computational feasibility of your proposed work – make an
  argument that the reproduction will be feasible.
  
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
+\begin_layout Standard
 The author did not state the computation resource for the work.
  But we believe it is computational feasible by looking at the size of data
  sets used(eICU database comprises 200,859 patient unit encounters between
@@ -211,26 +205,20 @@ The author did not state the computation resource for the work.
 \end_inset
 
 
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
+\begin_layout Paragraph*
 8) State whether you will re-use existing code (and provide a link to that
  code base) or whether you will implement yourself.
  
-\begin_inset Newline newline
-\end_inset
+\end_layout
 
-
-\begin_inset Newline newline
-\end_inset
-
-We plan to re-implement the proposed model ourselves so that we will be
- able to learn better the ideas behind the work and gain deeper understanding.
+\begin_layout Standard
+We plan to refactor the proposed model(TPC) code so that we will be able
+ to learn better the ideas behind the work and gain deeper understanding.
  However, for baseline models, we consider re-use the existing code if needed.
-\begin_inset Newline newline
-\end_inset
-
-
+ When time is allowed, we will also consider re-implement the proposed model(TPC
+) code ourselves.
 \begin_inset Newline newline
 \end_inset
 

@@ -98,6 +98,18 @@ def gen_patient_chunk(patients, size=1000):
         yield chunk
         chunk = list(islice(it, size))
 
+
+def pd_big_read_csv(path: str):
+    mylist = []
+
+    for chunk in pd.read_csv(path, chunksize=20000):
+        mylist.append(chunk)
+
+    big_pd = pd.concat(mylist, axis=0)
+    del mylist
+    return big_pd
+
+
 def gen_timeseries_file(eICU_path, test=False):
 
     print('==> Loading data from timeseries files...')
@@ -111,7 +123,8 @@ def gen_timeseries_file(eICU_path, test=False):
         timeseries_lab = pd.read_csv(eICU_path + 'timeserieslab.csv')
         timeseries_resp = pd.read_csv(eICU_path + 'timeseriesresp.csv')
         timeseries_nurse = pd.read_csv(eICU_path + 'timeseriesnurse.csv')
-        timeseries_periodic = pd.read_csv(eICU_path + 'timeseriesperiodic.csv')
+        timeseries_periodic = pd_big_read_csv(eICU_path + 'timeseriesperiodic.csv')
+        # timeseries_periodic = pd.read_csv(eICU_path + 'timeseriesperiodic.csv', low_memory=False)
         timeseries_aperiodic = pd.read_csv(eICU_path + 'timeseriesaperiodic.csv')
 
     print('==> Reconfiguring lab timeseries...')

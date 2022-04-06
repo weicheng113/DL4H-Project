@@ -15,7 +15,8 @@ if __name__=='__main__':
     except FileNotFoundError:
         pass
     cut_off_prevalence = 0.01  # this would be 1%
-    timeseries_main(eICU_path, test=False)
+    # timeseries_main(eICU_path, test=False)
+    timeseries_main(eICU_path, test=True)
     diagnoses_main(eICU_path, cut_off_prevalence)
     flat_and_labels_main(eICU_path)
     split_train_test(eICU_path, is_test=False)

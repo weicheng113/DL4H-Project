@@ -1,6 +1,8 @@
 .idea
 /#*#
 *~
+*.zip
+/TPC-LoS-prediction/eicu-collaborative-research-database-2.0/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

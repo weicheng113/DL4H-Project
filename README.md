@@ -42,3 +42,18 @@ conda env update -f environment.yml --prune
 # 5. run the pre-processing scripts
 python -m eICU_preprocessing.run_all_preprocessing
 ```
+
+### Setup eICU Database Locally
+```shell
+# 1. download files https://physionet.org/content/mimiciv/0.4/.
+
+# 2. install Postgres http://www.postgresql.org/download/
+
+# 3. clone https://github.com/EmmaRocheteau/MIMIC-IV-Postgres
+
+# 4. start SQL Shell(psql)
+# 4.1 create tables
+\i D:/git/MIMIC-IV-Postgres/create_tables.sql
+# 4.2 load data
+\i D:/git/MIMIC-IV-Postgres/load_data_gz.sql
+```

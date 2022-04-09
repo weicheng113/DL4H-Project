@@ -3,6 +3,10 @@
 *~
 *.zip
 /TPC-LoS-prediction/eicu-collaborative-research-database-2.0/
+/TPC-LoS-prediction/paths.json
+/TPC-LoS-prediction/mimic-iv-0.4/
+/TPC-LoS-prediction/eicu-data/
+**/*.7z
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

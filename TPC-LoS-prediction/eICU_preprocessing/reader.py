@@ -56,6 +56,12 @@ class eICUReader(object):
         return padded, mask, torch.tensor(seq_lengths).type(self._dtype)
 
     def get_los_labels(self, labels, times, mask):
+        # labels(batch_size) is actualICULOS in days, which is the total actual ICU length of stay for a patient.
+        # times(batch_size, # time series of a patient). Times store offset time from admit time.
+        # mask(batch_size, # time series of a patient)
+
+        # We use actualICULOS - offset time from admit time = the length of stay left from that measurement,
+        # which is the value we would like to predict given the measurement at the point of time.
         times = labels.unsqueeze(1).repeat(1, times.shape[1]) - times
         # clamp any labels that are less than 30 mins otherwise it becomes too small when the log is taken
         # make sure where there is no data the label is 0
@@ -74,10 +80,11 @@ class eICUReader(object):
             # this produces a generator that returns a list of batch_size patient identifiers
             patient_batches = (self.patients[pos:pos + batch_size] for pos in range(0, len(self.patients), batch_size))
             # create a generator to capture a single patient timeseries
-            ts_patient = groupby(map(self.line_split, timeseries_file), key=lambda line: line[0])
+            ts_patient = groupby(map(self.line_split, timeseries_file), key=lambda line: line[0])  #  dict(key=patientid, value=record)
             # we loop through these batches, tracking the index because we need it to index the pandas dataframes
-            for i, batch in enumerate(patient_batches):
-                ts_batch = [[line[1:] for line in ts] for _, ts in islice(ts_patient, batch_size)]
+            for i, batch_not_used in enumerate(patient_batches):
+                ts_batch = [[line[1:] for line in ts] for _, ts in islice(ts_patient, batch_size)]  # ts_batch(batch_size, # time series of a patient, a time series features)
+                # padded(batch_size, a time series features, # time series of a patient), mask(batch_size, # time series of a patient), seq_lengths(batch_size)
                 padded, mask, seq_lengths = self.pad_sequences(ts_batch)
                 los_labels = self.get_los_labels(torch.tensor(self.labels.iloc[i*batch_size:(i+1)*batch_size,7].values, device=self._device).type(self._dtype), padded[:,0,:], mask)
                 mort_labels = self.get_mort_labels(torch.tensor(self.labels.iloc[i*batch_size:(i+1)*batch_size,5].values, device=self._device).type(self._dtype), length=mask.shape[1])

@@ -107,7 +107,7 @@ class TempPointConv(nn.Module):
         self.n_layers = config.n_layers
         self.model_type = config.model_type
         self.share_weights = config.share_weights
-        self.diagnosis_size = config.diagnosis_size
+        self.diagnosis_size = config.diagnosis_size  # diagnosis embedding dimension
         self.main_dropout_rate = config.main_dropout_rate
         self.temp_dropout_rate = config.temp_dropout_rate
         self.kernel_size = config.kernel_size
@@ -115,13 +115,15 @@ class TempPointConv(nn.Module):
         self.point_sizes = config.point_sizes
         self.batchnorm = config.batchnorm
         self.last_linear_size = config.last_linear_size
-        self.F = F
-        self.D = D
-        self.no_flat_features = no_flat_features
+        self.F = F  # number of TimeSeries features
+        self.D = D  # number of Diagnose features
+        self.no_flat_features = no_flat_features  # number of flat features
+        # ablations refer to initialise_arguments.py
         self.no_diag = config.no_diag
         self.no_mask = config.no_mask
         self.no_exp = config.no_exp
         self.no_skip_connections = config.no_skip_connections
+
         self.alpha = config.alpha
         self.momentum = 0.01 if self.batchnorm == 'low_momentum' else 0.1
 
@@ -176,6 +178,7 @@ class TempPointConv(nn.Module):
         # non-module layer attributes
         self.layers = []
         for i in range(self.n_layers):
+            # 1, 2, 4, 6(why not 8?)
             dilation = i * (self.kernel_size - 1) if i > 0 else 1  # dilation = 1 for the first layer, after that it captures all the information gathered by previous layers
             temp_k = self.temp_kernels[i]
             point_size = self.point_sizes[i]
@@ -271,7 +274,7 @@ class TempPointConv(nn.Module):
         self.Zt = 0
 
         for i in range(self.n_layers):
-
+            # F: TimeSeries feature size, no_flat_features: flat feature size.
             temp_in_channels = (self.F + self.Zt) * (1 + self.Y) if i > 0 else 2 * self.F  # (F + Zt) * (Y + 1)
             temp_out_channels = (self.F + self.Zt) * self.layers[i]['temp_kernels']  # (F + Zt) * temp_kernels
             linear_input_dim = (self.F + self.Zt - self.Z) * self.Y + self.Z + 2 * self.F + 2 + self.no_flat_features  # (F + Zt-1) * Y + Z + 2F + 2 + no_flat_features

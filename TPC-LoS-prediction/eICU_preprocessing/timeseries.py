@@ -123,8 +123,8 @@ def gen_timeseries_file(eICU_path, test=False):
         timeseries_lab = pd.read_csv(eICU_path + 'timeserieslab.csv')
         timeseries_resp = pd.read_csv(eICU_path + 'timeseriesresp.csv')
         timeseries_nurse = pd.read_csv(eICU_path + 'timeseriesnurse.csv')
-        timeseries_periodic = pd_big_read_csv(eICU_path + 'timeseriesperiodic.csv')
-        # timeseries_periodic = pd.read_csv(eICU_path + 'timeseriesperiodic.csv', low_memory=False)
+        # timeseries_periodic = pd_big_read_csv(eICU_path + 'timeseriesperiodic.csv')
+        timeseries_periodic = pd.read_csv(eICU_path + 'timeseriesperiodic.csv')
         timeseries_aperiodic = pd.read_csv(eICU_path + 'timeseriesaperiodic.csv')
 
     print('==> Reconfiguring lab timeseries...')

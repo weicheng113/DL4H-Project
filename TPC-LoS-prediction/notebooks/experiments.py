@@ -1,6 +1,8 @@
 import torch.nn as nn
 import torch
 
+# https://jinglescode.github.io/2020/11/01/how-convolutional-layers-work-deep-learning-neural-networks/
+
 
 class TestConv1dGroups(nn.Module):
     def __init__(self):

@@ -88,12 +88,12 @@ class eICUReader(object):
                 padded, mask, seq_lengths = self.pad_sequences(ts_batch)
                 los_labels = self.get_los_labels(torch.tensor(self.labels.iloc[i*batch_size:(i+1)*batch_size,7].values, device=self._device).type(self._dtype), padded[:,0,:], mask)
                 mort_labels = self.get_mort_labels(torch.tensor(self.labels.iloc[i*batch_size:(i+1)*batch_size,5].values, device=self._device).type(self._dtype), length=mask.shape[1])
-
+                # padded(batch_size, a time series features, # time series of a patient)
                 # we must avoid taking data before time_before_pred hours to avoid diagnoses and apache variable from the future
-                yield (padded,  # B * (2F + 2) * T
-                       mask[:, time_before_pred:],  # B * (T - time_before_pred)
-                       torch.tensor(self.diagnoses.iloc[i*batch_size:(i+1)*batch_size].values, device=self._device).type(self._dtype),  # B * D
-                       torch.tensor(self.flat.iloc[i*batch_size:(i+1)*batch_size].values.astype(float), device=self._device).type(self._dtype),  # B * no_flat_features
+                yield (padded,  # B * (2F + 2) * T; padded(batch_size, a time series features, # time series of a patient)
+                       mask[:, time_before_pred:],  # B * (T - time_before_pred); mask(batch_size, # time series of a patient)
+                       torch.tensor(self.diagnoses.iloc[i*batch_size:(i+1)*batch_size].values, device=self._device).type(self._dtype),  # B * D; diagnoses(batch_size, diagnoses feature dim)
+                       torch.tensor(self.flat.iloc[i*batch_size:(i+1)*batch_size].values.astype(float), device=self._device).type(self._dtype),  # B * no_flat_features; flat(batch_size, patient feature dim)
                        los_labels[:, time_before_pred:],
                        mort_labels[:, time_before_pred:],
                        seq_lengths - time_before_pred)

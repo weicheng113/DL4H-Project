@@ -421,7 +421,9 @@ class TempPointConv(nn.Module):
         # prev_point shape: (B * T) * Z
 
         Z = prev_point.shape[1] if prev_point is not None else 0
-
+        # padding[padding_left=(kernel_size-1)*dilation, padding_right=0],
+        # for kernel_size=3 and dilation=2, padding_left = 4 to cover the range.
+        # X_padded(batch_size, ts_feature_size, left_padding+n_measure_of_patient)
         X_padded = pad(X, padding, 'constant', 0)  # B * ((F + Zt) * (Y + 1)) * (T + padding)
         X_temp = self.temp_dropout(bn_temp(temp(X_padded)))  # B * ((F + Zt) * temp_kernels) * T
 
@@ -444,7 +446,7 @@ class TempPointConv(nn.Module):
 
         X_point_rep = point_output.view(B, T, point_size, 1).permute(0, 2, 3, 1).repeat(1, 1, (1 + temp_kernels), 1)  # B * point_size * (1 + temp_kernels) * T
         X_combined = self.relu(cat((temp_skip, X_point_rep), dim=1))  # B * (F + Zt) * (1 + temp_kernels) * T
-        next_X = X_combined.view(B, (point_skip.shape[1] + point_size) * (1 + temp_kernels), T)  # B * ((F + Zt + point_size) * (1 + temp_kernels)) * T
+        next_X = X_combined.contiguous().view(B, (point_skip.shape[1] + point_size) * (1 + temp_kernels), T)  # B * ((F + Zt + point_size) * (1 + temp_kernels)) * T
 
         temp_output = X_temp.permute(0, 2, 1).contiguous().view(B * T, point_skip.shape[1] * temp_kernels)  # (B * T) * ((F + Zt) * temp_kernels)
 
@@ -533,10 +535,10 @@ class TempPointConv(nn.Module):
 
     def forward(self, X, diagnoses, flat, time_before_pred=5):
 
-        # flat is B * no_flat_features
-        # diagnoses is B * D
-        # X is B * (2F + 2) * T
-        # X_mask is B * T
+        # flat is B * no_flat_features; flat(batch_size, patient_feature_size)
+        # diagnoses is B * D; diagnoses(batch_size, diagnoses_feature_size)
+        # X is B * (2F + 2) * T; X(batch_size, a_time_series_features, # measures of a patient)
+        # X_mask is B * T; X_mask(batch_size, # measures of a patient) is mask for X.
         # (the batch is padded to the longest sequence, the + 2 is the time and the hour which are not for temporal convolution)
 
         # get rid of the time and hour fields - these shouldn't go through the temporal network
@@ -546,22 +548,25 @@ class TempPointConv(nn.Module):
         # prepare repeat arguments and initialise layer loop
         B, _, T = X_separated[0].shape
         if self.model_type in ['pointwise_only', 'tpc']:
-            repeat_flat = flat.repeat_interleave(T, dim=0)  # (B * T) * no_flat_features
+            repeat_flat = flat.repeat_interleave(T, dim=0)  # (B * T) * no_flat_features; repeat_flat(batch_size * # measures of a patient, patient_feature_size)
             if self.no_mask:
                 X_orig = cat((X_separated[0],
                               X[:, 0, :].unsqueeze(1),
                               X[:, -1, :].unsqueeze(1)), dim=1).permute(0, 2, 1).contiguous().view(B * T, self.F + 2)  # (B * T) * (F + 2)
             else:
-                X_orig = X.permute(0, 2, 1).contiguous().view(B * T, 2 * self.F + 2)  # (B * T) * (2F + 2)
+                X_orig = X.permute(0, 2, 1).contiguous().view(B * T, 2 * self.F + 2)  # (B * T) * (2F + 2); X_orig(batch_size * # measures of a patient, a_time_series_features)
             repeat_args = {'repeat_flat': repeat_flat,
                            'X_orig': X_orig,
                            'B': B,
-                           'T': T}
+                           'T': T}  # T: # measures of a patient, e.g. 335
             if self.model_type == 'tpc':
                 if self.no_mask:
                     next_X = X_separated[0]
                 else:
-                    next_X = torch.stack(X_separated, dim=2).reshape(B, 2 * self.F, T)  # B * 2F * T
+                    # next_X(batch_size, a_time_series_features, # measures of a patient), one value in time_series_feature_size followed by its mask.
+                    # Whereas, previously, all the feature values first then all the mask afterwards.
+                    next_X = torch.stack(X_separated, dim=2).reshape(B, 2 * self.F, T)  # B * 2F * T,
+                # point_skip(batch_size, ts_features_half, # measures of a patient), which contains time series feature values.
                 point_skip = X_separated[0]  # keeps track of skip connections generated from linear layers; B * F * T
                 temp_output = None
                 point_output = None
@@ -682,3 +687,59 @@ class TempPointConv(nn.Module):
             if self.task == 'multitask':
                 loss = los_loss + self.bce_loss(y_hat_mort, y_mort) * self.alpha
         return loss
+
+
+    # def forward(self, X, diagnoses, flat, time_before_pred=5):  # added for study purpose.
+    #     if (self.model_type == 'tpc') and self.no_diag and self.no_mask and self.no_exp and self.no_skip_connections:
+    #         self.forward_tpc(X=X, diagnoses=diagnoses, flat=flat, time_before_pred=time_before_pred)
+    #     else:
+    #         raise Exception("should not reach here")
+
+
+    def forward_tpc(self, X, diagnoses, flat, time_before_pred=5):
+
+        # flat is B * no_flat_features; flat(batch_size, patient_feature_size)
+        # diagnoses is B * D; diagnoses(batch_size, diagnoses_feature_size)
+        # X is B * (2F + 2) * T; X(batch_size, a_time_series_features, # measures of a patient)
+        # X_mask is B * T; X_mask(batch_size, # measures of a patient) is mask for X.
+        # (the batch is padded to the longest sequence, the + 2 is the time and the hour which are not for temporal convolution)
+
+        # get rid of the time and hour fields - these shouldn't go through the temporal network
+        # and split into features and indicator variables
+        X_separated = torch.split(X[:, 1:-1, :], self.F, dim=1)  # tuple ((B * F * T), (B * F * T))
+
+        # prepare repeat arguments and initialise layer loop
+        B, _, T = X_separated[0].shape
+        repeat_flat = flat.repeat_interleave(T, dim=0)  # (B * T) * no_flat_features; repeat_flat(batch_size * # measures of a patient, patient_feature_size)
+        X_orig = X.permute(0, 2, 1).contiguous().view(B * T, 2 * self.F + 2)  # (B * T) * (2F + 2); X_orig(batch_size * # measures of a patient, a_time_series_features)
+        repeat_args = {'repeat_flat': repeat_flat,
+                       'X_orig': X_orig,
+                       'B': B,
+                       'T': T}  # T: # measures of a patient, e.g. 335
+        # next_X(batch_size, a_time_series_features, # measures of a patient), one value in time_series_feature_size followed by its mask.
+        # Whereas, previously, all the feature values first then all the mask afterwards.
+        next_X = torch.stack(X_separated, dim=2).reshape(B, 2 * self.F, T)  # B * 2F * T,
+        # point_skip(batch_size, ts_features_half, # measures of a patient), which contains time series feature values.
+        point_skip = X_separated[0]  # keeps track of skip connections generated from linear layers; B * F * T
+        temp_output = None
+        point_output = None
+        for i in range(self.n_layers):
+            kwargs = dict(self.layer_modules[str(i)], **repeat_args)
+            temp_output, point_output, next_X, point_skip = self.temp_pointwise(X=next_X, point_skip=point_skip,
+                                                                                prev_temp=temp_output, prev_point=point_output,
+                                                                                temp_kernels=self.layers[i]['temp_kernels'],
+                                                                                padding=self.layers[i]['padding'],
+                                                                                point_size=self.layers[i]['point_size'],
+                                                                                **kwargs)
+
+        diagnoses_enc = self.relu(self.main_dropout(self.bn_diagnosis_encoder(self.diagnosis_encoder(diagnoses))))  # B * diagnosis_size
+        combined_features = cat((flat.repeat_interleave(T - time_before_pred, dim=0),  # (B * (T - time_before_pred)) * no_flat_features
+                                 diagnoses_enc.repeat_interleave(T - time_before_pred, dim=0),  # (B * (T - time_before_pred)) * diagnosis_size
+                                 next_X[:, :, time_before_pred:].permute(0, 2, 1).contiguous().view(B * (T - time_before_pred), -1)), dim=1)  # (B * (T - time_before_pred)) * (((F + Zt) * (1 + Y)) + diagnosis_size + no_flat_features) for tpc
+
+        last_point_los = self.relu(self.main_dropout(self.bn_point_last_los(self.point_last_los(combined_features))))
+        last_point_mort = self.relu(self.main_dropout(self.bn_point_last_mort(self.point_last_mort(combined_features))))
+        los_predictions = self.hardtanh(exp(self.point_final_los(last_point_los).view(B, T - time_before_pred)))  # B * (T - time_before_pred)
+        mort_predictions = self.sigmoid(self.point_final_mort(last_point_mort).view(B, T - time_before_pred))  # B * (T - time_before_pred)
+
+        return los_predictions, mort_predictions

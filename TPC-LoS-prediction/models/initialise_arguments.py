@@ -43,7 +43,8 @@ def initialise_arguments():
     return parser
 
 def gen_config(parser):
-    args = parser.parse_args()
+    # args = parser.parse_args()
+    args = parser.parse_args(args=[])
     # prepare config dictionary, add all arguments from args
     c = Config()
     for arg in vars(args):

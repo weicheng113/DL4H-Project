@@ -1,5 +1,6 @@
 import torch
-from eICU_preprocessing.reader import eICUReader
+# from eICU_preprocessing.reader import eICUReader
+from eICU_preprocessing.eicu_dataset import EICUReaderAdapter
 from MIMIC_preprocessing.reader import MIMICReader
 from eICU_preprocessing.split_train_test import create_folder
 import numpy as np
@@ -61,14 +62,24 @@ class ExperimentTemplate(PytorchExperiment):
             self.datareader = MIMICReader
             self.data_path = MIMIC_path
         else:
-            self.datareader = eICUReader
+            # self.datareader = eICUReader
+            self.datareader = EICUReaderAdapter
             self.data_path = eICU_path
-        self.train_datareader = self.datareader(self.data_path + 'train', device=self.device,
-                                           labs_only=self.config.labs_only, no_labs=self.config.no_labs)
-        self.val_datareader = self.datareader(self.data_path + 'val', device=self.device,
-                                         labs_only=self.config.labs_only, no_labs=self.config.no_labs)
-        self.test_datareader = self.datareader(self.data_path + 'test', device=self.device,
-                                          labs_only=self.config.labs_only, no_labs=self.config.no_labs)
+        # self.train_datareader = self.datareader(self.data_path + 'train', device=self.device,
+        #                                    labs_only=self.config.labs_only, no_labs=self.config.no_labs)
+        # self.val_datareader = self.datareader(self.data_path + 'val', device=self.device,
+        #                                  labs_only=self.config.labs_only, no_labs=self.config.no_labs)
+        # self.test_datareader = self.datareader(self.data_path + 'test', device=self.device,
+        #                                   labs_only=self.config.labs_only, no_labs=self.config.no_labs)
+        self.train_datareader = self.datareader(self.data_path + 'train', batch_size=self.config.batch_size,
+                                                device=self.device,
+                                                labs_only=self.config.labs_only, no_labs=self.config.no_labs)
+        self.val_datareader = self.datareader(self.data_path + 'val', batch_size=self.config.batch_size_test,
+                                              device=self.device,
+                                              labs_only=self.config.labs_only, no_labs=self.config.no_labs)
+        self.test_datareader = self.datareader(self.data_path + 'test', batch_size=self.config.batch_size_test,
+                                               device=self.device,
+                                               labs_only=self.config.labs_only, no_labs=self.config.no_labs)
         self.no_train_batches = len(self.train_datareader.patients) / self.config.batch_size
         self.checkpoint_counter = 0
 
@@ -87,7 +98,8 @@ class ExperimentTemplate(PytorchExperiment):
         self.model.train()
         if epoch > 0 and self.config.shuffle_train:
             shuffle_train(self.config.eICU_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
-        train_batches = self.train_datareader.batch_gen(batch_size=self.config.batch_size)
+        # train_batches = self.train_datareader.batch_gen(batch_size=self.config.batch_size)
+        train_batches = self.train_datareader
         train_loss = []
         train_y_hat_los = np.array([])
         train_y_los = np.array([])
@@ -173,7 +185,8 @@ class ExperimentTemplate(PytorchExperiment):
 
         if self.config.mode == 'train':
             self.model.eval()
-            val_batches = self.val_datareader.batch_gen(batch_size=self.config.batch_size_test)
+            # val_batches = self.val_datareader.batch_gen(batch_size=self.config.batch_size_test)
+            val_batches = self.val_datareader
             val_loss = []
             val_y_hat_los = np.array([])
             val_y_los = np.array([])
@@ -235,7 +248,8 @@ class ExperimentTemplate(PytorchExperiment):
     def test(self, mort_pred_time=24):
 
         self.model.eval()
-        test_batches = self.test_datareader.batch_gen(batch_size=self.config.batch_size_test)
+        # test_batches = self.test_datareader.batch_gen(batch_size=self.config.batch_size_test)
+        test_batches = self.test_datareader
         test_loss = []
         test_y_hat_los = np.array([])
         test_y_los = np.array([])

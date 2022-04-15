@@ -23,7 +23,8 @@ def best_tpc(c):
             c['n_epochs'] = 6
         else:
             c['n_epochs'] = 15
-        c['batch_size'] = 32
+#         c['batch_size'] = 32
+        c['batch_size'] = 64
         c['n_layers'] = 9
         c['kernel_size'] = 4
         c['no_temp_kernels'] = 12
@@ -100,7 +101,8 @@ def best_transformer(c):
     c = best_global(c)
     c['mode'] = 'test'
     if c['dataset'] == 'eICU':
-        c['batch_size'] = 32
+#         c['batch_size'] = 32
+        c['batch_size'] = 64
         c['n_layers'] = 6
         c['feedforward_size'] = 256
         c['d_model'] = 16

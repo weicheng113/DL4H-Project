@@ -16,7 +16,7 @@ def run_trixi_browser():
     parser.add_argument("-p", "--port", default=5000, type=int,
                         help="Port to start the server on (5000 by default)")
     args = [
-       "./models/experiments/eICU/LoS/TPC",
+       "./models/experiments/final/eICU/LoS/TPC",
         "--port", "8080",
         "--debug",
         "--expose"
@@ -28,7 +28,7 @@ def run_trixi_browser():
     base_dir = os.path.abspath(base_dir)
 
     app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), "static"))
-    blueprint = Blueprint("data", __name__, static_url_path="/STATIC/", static_folder=base_dir)
+    blueprint = Blueprint("data", __name__, static_url_path='/' + base_dir, static_folder=base_dir)
     app.register_blueprint(blueprint)
 
     register_url_routes(app, base_dir)

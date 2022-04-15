@@ -22,7 +22,8 @@ def best_tpc(c):
         elif c['task'] == 'mortality':
             c['n_epochs'] = 6
         else:
-            c['n_epochs'] = 15
+            # c['n_epochs'] = 15
+            c['n_epochs'] = 1
 #         c['batch_size'] = 32
         c['batch_size'] = 64
         c['n_layers'] = 9

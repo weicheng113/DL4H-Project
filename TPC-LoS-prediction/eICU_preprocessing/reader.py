@@ -78,7 +78,7 @@ class eICUReader(object):
             # the first line is the feature names; we have to skip over this
             self.timeseries_header = next(timeseries_file).strip().split(',')
             # this produces a generator that returns a list of batch_size patient identifiers
-            patient_batches = (self.patients[pos:pos + batch_size] for pos in range(0, len(self.patients), batch_size))
+            patient_batches = (self.patients[pos:pos + batch_size] for pos in range(0, len(self.patients), batch_size) if pos+2 < len(self.patients))
             # create a generator to capture a single patient timeseries
             ts_patient = groupby(map(self.line_split, timeseries_file), key=lambda line: line[0])  #  dict(key=patientid, value=record)
             # we loop through these batches, tracking the index because we need it to index the pandas dataframes

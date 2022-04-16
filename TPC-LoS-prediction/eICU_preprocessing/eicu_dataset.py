@@ -64,8 +64,8 @@ class EICUDataset(torch.utils.data.IterableDataset):
             # create a generator to capture a single patient timeseries
             ts_patient = groupby(map(self.line_split, timeseries_file), key=lambda line: line[0])  #  dict(key=patientid, value=record)
             # we loop through these batches, tracking the index because we need it to index the pandas dataframes
-            # for i in range(self.no_patients):
-            for i in range(64):
+            for i in range(self.no_patients):
+            # for i in range(64):
                 ts = torch.tensor([measure[1:] for measure in next(ts_patient)[1]]).type(self._dtype)  # ts_batch(batch_size, # time series of a patient, a time series features)
                 ts[:, 0] /= 24  # scale the time into days instead of hours
                 los_labels = self.get_los_labels(torch.tensor(self.labels.iloc[i, 7]).type(self._dtype), ts[:, 0])
@@ -151,7 +151,14 @@ class EICUReaderAdapter:
     def __init__(self, data_path, batch_size: int, device=None, labs_only=False, no_labs=False):
         dataset = EICUDataset(data_path=data_path, device=device, labs_only=labs_only, no_labs=no_labs)
         self.data_loader = DataLoader(
-            dataset=dataset, batch_size=batch_size, shuffle=False, collate_fn=dataset.collate, num_workers=4)
+            dataset=dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            collate_fn=dataset.collate,
+            num_workers=2,
+            prefetch_factor=2,
+            drop_last=True
+        )
         self.F = dataset.F
         self.D = dataset.D
         self.no_flat_features = dataset.no_flat_features

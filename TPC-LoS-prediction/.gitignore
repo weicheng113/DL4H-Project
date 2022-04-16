@@ -6,3 +6,5 @@ MIMIC_data
 __pycache__
 figures
 *.csv
+experiment_results
+notebooks/experiment_dir

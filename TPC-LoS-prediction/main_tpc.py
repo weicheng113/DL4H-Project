@@ -2,6 +2,7 @@ from models.initialise_arguments import initialise_tpc_arguments
 from models.run_tpc import TPC
 from eICU_preprocessing.split_train_test import create_folder
 from models.final_experiment_scripts.best_hyperparameters import best_tpc
+import torch
 
 
 def run_tpc():
@@ -30,6 +31,8 @@ def run_tpc():
 
 
 def run_best_tpc():
+    torch.multiprocessing.set_start_method('spawn')
+
     c = initialise_tpc_arguments()
     c['exp_name'] = 'TPC'
     c['dataset'] = 'eICU'

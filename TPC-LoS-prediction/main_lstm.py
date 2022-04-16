@@ -37,4 +37,5 @@ if __name__ == '__main__':
     # args = parser.parse_args() to args = parser.parse_args(args=[])
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
-    run_lstm()
+    # run_lstm()
+    run_best_lstm()

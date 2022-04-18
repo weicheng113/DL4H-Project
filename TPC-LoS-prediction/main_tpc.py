@@ -88,7 +88,7 @@ def run_pl_best_tpc():
     # trainer = pl.Trainer(fast_dev_run=True, max_epochs=2)
     trainer = pl.Trainer(
         max_epochs=c.n_epochs,
-        progress_bar_refresh_rate=20,
+#         progress_bar_refresh_rate=20,
         accelerator="gpu",
         devices=4,
         strategy="ddp"

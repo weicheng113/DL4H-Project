@@ -670,13 +670,13 @@ class TempPointConv(nn.Module):
                 point_output)  # (B * T) * point_size
 
 
-    def loss(self, y_hat_los, y_hat_mort, y_los, y_mort, mask, seq_lengths, device, sum_losses, loss_type):
+    def loss(self, y_hat_los, y_hat_mort, y_los, y_mort, mask, seq_lengths, sum_losses, loss_type):
         # mort loss
         if self.task == 'mortality':
             loss = self.bce_loss(y_hat_mort, y_mort) * self.alpha
         # los loss
         else:
-            bool_type = torch.cuda.BoolTensor if device == torch.device('cuda') else torch.BoolTensor
+            bool_type = torch.BoolTensor
             if loss_type == 'msle':
                 los_loss = self.msle_loss(y_hat_los, y_los, mask.type(bool_type), seq_lengths, sum_losses)
             elif loss_type == 'mse':

@@ -32,7 +32,7 @@ class ExperimentModule(LightningModule):
             padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
         y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-        loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
+        loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
                                self.config.sum_losses, self.config.loss)
         return loss, y_hat_los, y_hat_mort
 

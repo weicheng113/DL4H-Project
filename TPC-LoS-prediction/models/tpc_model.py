@@ -17,9 +17,9 @@ class MSLELoss(nn.Module):
 
     def forward(self, y_hat, y, mask, seq_length, sum_losses=False):
         # the log(predictions) corresponding to no data should be set to 0
-        log_y_hat = y_hat.log().where(mask, torch.zeros_like(y))
+        log_y_hat = y_hat.log().where(mask, torch.zeros_like(y, device=y_hat.device))
         # the we set the log(labels) that correspond to no data to be 0 as well
-        log_y = y.log().where(mask, torch.zeros_like(y))
+        log_y = y.log().where(mask, torch.zeros_like(y, device=y_hat.device))
         # where there is no data log_y_hat = log_y = 0, so the squared error will be 0 in these places
         loss = self.squared_error(log_y_hat, log_y)
         loss = torch.sum(loss, dim=1)

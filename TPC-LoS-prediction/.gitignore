@@ -8,3 +8,4 @@ figures
 *.csv
 experiment_results
 notebooks/experiment_dir
+lightning_logs

@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 from timeit import default_timer as timer
 from datetime import timedelta
+from pytorch_lightning import LightningDataModule
 
 # bit hacky but passes checks and I don't have time to implement a neater solution
 lab_indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 13, 15, 16, 18, 21, 22, 23, 24, 29, 32, 33, 34, 39, 40, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 60, 62, 63, 67, 68, 69, 70, 71, 72, 75, 83, 84, 86]
@@ -20,10 +21,11 @@ class EICUDataset(torch.utils.data.IterableDataset):
         self._labels_path = data_path + '/labels.csv'
         self._flat_path = data_path + '/flat.csv'
         self._timeseries_path = data_path + '/timeseries.csv'
-        self._device = device
+        # self._device = device
         self.labs_only = labs_only
         self.no_labs = no_labs
-        self._dtype = torch.cuda.FloatTensor if device.type == 'cuda' else torch.FloatTensor
+        # self._dtype = torch.cuda.FloatTensor if device.type == 'cuda' else torch.FloatTensor
+        self._dtype = torch.FloatTensor
 
         self.labels = pd.read_csv(self._labels_path, index_col='patient')
         self.flat = pd.read_csv(self._flat_path, index_col='patient')
@@ -65,7 +67,7 @@ class EICUDataset(torch.utils.data.IterableDataset):
             ts_patient = groupby(map(self.line_split, timeseries_file), key=lambda line: line[0])  #  dict(key=patientid, value=record)
             # we loop through these batches, tracking the index because we need it to index the pandas dataframes
             for i in range(self.no_patients):
-            # for i in range(64):
+            # for i in range(64*16):
                 ts = torch.tensor([measure[1:] for measure in next(ts_patient)[1]]).type(self._dtype)  # ts_batch(batch_size, # time series of a patient, a time series features)
                 ts[:, 0] /= 24  # scale the time into days instead of hours
                 los_labels = self.get_los_labels(torch.tensor(self.labels.iloc[i, 7]).type(self._dtype), ts[:, 0])
@@ -94,14 +96,23 @@ class EICUDataset(torch.utils.data.IterableDataset):
             "mask": batch_collated["mask"][:, time_before_pred:],
             "ts_lengths": torch.tensor(ts_lengths).type(self._dtype) - time_before_pred
         }
+        # return (
+        #     my_batch["time_series"].to(self._device),
+        #     my_batch["mask"].to(self._device),
+        #     my_batch["diagnoses"].to(self._device),
+        #     my_batch["flat"].to(self._device),
+        #     my_batch["los_labels"].to(self._device),
+        #     my_batch["mort_labels"].to(self._device),
+        #     my_batch["ts_lengths"].to(self._device)
+        # )
         return (
-            my_batch["time_series"].to(self._device),
-            my_batch["mask"].to(self._device),
-            my_batch["diagnoses"].to(self._device),
-            my_batch["flat"].to(self._device),
-            my_batch["los_labels"].to(self._device),
-            my_batch["mort_labels"].to(self._device),
-            my_batch["ts_lengths"].to(self._device)
+            my_batch["time_series"],
+            my_batch["mask"],
+            my_batch["diagnoses"],
+            my_batch["flat"],
+            my_batch["los_labels"],
+            my_batch["mort_labels"],
+            my_batch["ts_lengths"]
         )
 
     def pad_batch(self, batch):
@@ -145,6 +156,64 @@ class EICUDataset(torch.utils.data.IterableDataset):
     #     for p, l in enumerate(seq_lengths):
     #         mask[p, :l] = 1
     #     return padded, mask, torch.tensor(seq_lengths).type(self._dtype)
+
+
+class EICUDataModule(LightningDataModule):
+    def __init__(self, data_path: str, train_batch_size: int, val_batch_size: int, test_batch_size: int):
+        super(EICUDataModule, self).__init__()
+        self.train_dataset = EICUDataset(
+            data_path=data_path+"train",
+            device=torch.device('cpu'),
+            labs_only=False,
+            no_labs=False)
+        self.val_dataset = EICUDataset(
+            data_path=data_path+"val",
+            device=torch.device('cpu'),
+            labs_only=False,
+            no_labs=False)
+        self.test_dataset = EICUDataset(
+            data_path=data_path+"test",
+            device=torch.device('cpu'),
+            labs_only=False,
+            no_labs=False)
+        self.train_batch_size = train_batch_size
+        self.val_batch_size = val_batch_size
+        self.test_batch_size = test_batch_size
+
+        self.F = self.train_dataset.F
+        self.D = self.train_dataset.D
+        self.no_flat_features = self.train_dataset.no_flat_features
+        self.patients = self.train_dataset.patients
+
+    def train_dataloader(self):
+        return DataLoader(
+            dataset=self.train_dataset,
+            batch_size=self.train_batch_size,
+            num_workers=0,
+            shuffle=False,
+            collate_fn=self.train_dataset.collate,
+            prefetch_factor=2,
+            drop_last=True)
+
+    def val_dataloader(self):
+        return DataLoader(
+            self.val_dataset,
+            batch_size=self.val_batch_size,
+            num_workers=2,
+            shuffle=False,
+            collate_fn=self.val_dataset.collate,
+            prefetch_factor=2,
+            drop_last=True)
+
+    def test_dataloader(self):
+        return DataLoader(
+            self.test_dataset,
+            batch_size=self.test_batch_size,
+            num_workers=2,
+            shuffle=False,
+            collate_fn=self.test_dataset.collate,
+            prefetch_factor=2,
+            drop_last=True)
 
 
 class EICUReaderAdapter:

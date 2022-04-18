@@ -189,7 +189,7 @@ class EICUDataModule(LightningDataModule):
         return DataLoader(
             dataset=self.train_dataset,
             batch_size=self.train_batch_size,
-            num_workers=0,
+            num_workers=2,
             shuffle=False,
             collate_fn=self.train_dataset.collate,
             prefetch_factor=2,

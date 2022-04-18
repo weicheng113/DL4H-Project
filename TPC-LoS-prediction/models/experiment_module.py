@@ -42,7 +42,10 @@ class ExperimentModule(LightningModule):
         self.trixi_experiment.train_step_end(batch=batch, batch_idx=batch_idx, loss=loss,
                                              y_hat_los=y_hat_los, y_hat_mort=y_hat_mort)
 
-        return loss
+        return {"loss": loss}
+
+    def training_step_end(self, training_step_outputs):
+        return {'loss': training_step_outputs['loss'].sum()}
 
     def on_train_epoch_start(self):
         self.trixi_experiment.train_epoch_start()

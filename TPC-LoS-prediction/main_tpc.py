@@ -90,7 +90,7 @@ def run_pl_best_tpc():
         max_epochs=c.n_epochs,
         progress_bar_refresh_rate=20,
         accelerator="gpu",
-        devices=2,
+        devices=4,
         strategy="ddp"
     )
     trainer.fit(model=model_module, datamodule=data_module)

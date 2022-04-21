@@ -16,6 +16,7 @@ class MSLELoss(nn.Module):
         self.squared_error = nn.MSELoss(reduction='none')
 
     def forward(self, y_hat, y, mask, seq_length, sum_losses=False):
+#         print(f"y_hat.device: {y_hat.device}, mask.device: {mask.device}, torch.zeros_like(y, device=y_hat.device): {torch.zeros_like(y, device=y_hat.device).device}")
         # the log(predictions) corresponding to no data should be set to 0
         log_y_hat = y_hat.log().where(mask, torch.zeros_like(y, device=y_hat.device))
         # the we set the log(labels) that correspond to no data to be 0 as well
@@ -678,9 +679,9 @@ class TempPointConv(nn.Module):
         else:
             bool_type = torch.BoolTensor
             if loss_type == 'msle':
-                los_loss = self.msle_loss(y_hat_los, y_los, mask.type(bool_type), seq_lengths, sum_losses)
+                los_loss = self.msle_loss(y_hat_los, y_los, mask.bool(), seq_lengths, sum_losses)
             elif loss_type == 'mse':
-                los_loss = self.mse_loss(y_hat_los, y_los, mask.type(bool_type), seq_lengths, sum_losses)
+                los_loss = self.mse_loss(y_hat_los, y_los, mask.bool(), seq_lengths, sum_losses)
             if self.task == 'LoS':
                 loss = los_loss
             # multitask loss

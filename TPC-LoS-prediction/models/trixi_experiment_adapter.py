@@ -105,7 +105,12 @@ class TrixiExperimentAdapter(PytorchExperiment):
                 mask (bool_type): tensor showing which values are padding (0) and which are data (1)
         """
         # note it's fine to call .cpu() on a tensor already on the cpu
-        y = y.where(mask, torch.tensor(float('nan'))).flatten().detach().cpu().numpy()
+#         print(f"""
+#             y.device: {y.device},
+#             mask.device: {mask.device}, 
+#             torch.tensor(float('nan'), device=mask.device).device: {torch.tensor(float('nan'), device=mask.device).device}
+#             """)
+        y = y.where(mask, torch.tensor(float('nan'), device=mask.device)).flatten().detach().cpu().numpy()
         y = y[~np.isnan(y)]
         return y
 
@@ -144,24 +149,24 @@ class TrixiExperimentAdapter(PytorchExperiment):
         stats.add_loss(loss=loss.item())
         if self.config.task in ('LoS', 'multitask'):
             stats.add_los(
-                y_true=self.remove_padding(los_labels, mask.type(self.bool_type)),
-                predictions=self.remove_padding(y_hat_los.detach().cpu(), mask.type(self.bool_type)))
+                y_true=self.remove_padding(los_labels, mask.bool()),
+                predictions=self.remove_padding(y_hat_los.detach(), mask.bool()))
 
         if self.config.task in ('mortality', 'multitask') and mort_labels.shape[1] >= mort_pred_time:
             stats.add_mort(
                 y_true=self.remove_padding(mort_labels[:, mort_pred_time],
-                                           mask.type(self.bool_type)[:, mort_pred_time]),
-                predictions=self.remove_padding(y_hat_mort.detach().cpu()[:, mort_pred_time],
-                                                mask.type(self.bool_type)[:, mort_pred_time]))
+                                           mask.bool()[:, mort_pred_time]),
+                predictions=self.remove_padding(y_hat_mort.detach()[:, mort_pred_time],
+                                                mask.bool()[:, mort_pred_time]))
 
     def train_epoch_start(self):
-        self.elog.print(f"train_epoch_start")
+#         self.elog.print(f"train_epoch_start")
         self._epoch_idx += 1
         self.train_epoch_start_time = timer()
         self.train_stats.clear()
 
     def train_epoch_end(self):
-        self.elog.print(f"train_epoch_end")
+#         self.elog.print(f"train_epoch_end")
         end = timer()
         self.record_epoch_stats(stats=self.train_stats, stage=Stage.TRAIN)
         self.elog.print(f"Done epoch {self._epoch_idx}, spending {timedelta(seconds=end-self.train_epoch_start_time)}.")
@@ -209,11 +214,11 @@ class TrixiExperimentAdapter(PytorchExperiment):
         )
 
     def validation_epoch_start(self):
-        self.elog.print(f"validation_epoch_start")
+#         self.elog.print(f"validation_epoch_start")
         self.val_stats.clear()
 
     def validation_epoch_end(self):
-        self.elog.print(f"validation_epoch_end")
+#         self.elog.print(f"validation_epoch_end")
         self.record_epoch_stats(stats=self.val_stats, stage=Stage.VAL)
 
     def test_step_end(self, batch, batch_idx, loss: torch.Tensor, y_hat_los: torch.Tensor, y_hat_mort: torch.Tensor):

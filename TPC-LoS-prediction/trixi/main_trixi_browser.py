@@ -16,8 +16,8 @@ def run_trixi_browser():
     parser.add_argument("-p", "--port", default=5000, type=int,
                         help="Port to start the server on (5000 by default)")
     args = [
-       # "./experiment_results/experiment_20220416/final/eICU/LoS/TPC",
-        "./notebooks/experiment_dir",
+       # "../experiment_results/experiment_20220416/final/eICU/LoS/TPC",
+        "../notebooks/experiment_dir",
         "--port", "5000",
         "--debug",
         "--expose"

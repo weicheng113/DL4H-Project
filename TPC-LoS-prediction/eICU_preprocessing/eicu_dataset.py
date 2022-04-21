@@ -189,30 +189,30 @@ class EICUDataModule(LightningDataModule):
         return DataLoader(
             dataset=self.train_dataset,
             batch_size=self.train_batch_size,
-            num_workers=2,
+            num_workers=4,
             shuffle=False,
             collate_fn=self.train_dataset.collate,
-            prefetch_factor=2,
+            # prefetch_factor=2,
             drop_last=True)
 
     def val_dataloader(self):
         return DataLoader(
             self.val_dataset,
             batch_size=self.val_batch_size,
-            num_workers=2,
+            num_workers=4,
             shuffle=False,
             collate_fn=self.val_dataset.collate,
-            prefetch_factor=2,
+            # prefetch_factor=2,
             drop_last=True)
 
     def test_dataloader(self):
         return DataLoader(
             self.test_dataset,
             batch_size=self.test_batch_size,
-            num_workers=2,
+            num_workers=4,
             shuffle=False,
             collate_fn=self.test_dataset.collate,
-            prefetch_factor=2,
+            # prefetch_factor=2,
             drop_last=True)
 
 

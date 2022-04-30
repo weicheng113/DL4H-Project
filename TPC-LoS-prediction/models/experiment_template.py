@@ -137,51 +137,52 @@ class ExperimentTemplate(PytorchExperiment):
         train_y_mort = np.array([])
 
         # for batch_idx, batch in enumerate(train_batches):
-        batch_idx = 0
-        for batch in tqdm(train_batches, desc="Train"):
+        with tqdm(train_batches, desc="Train") as prog_bar:
+            batch_idx = 0
+            for batch in tqdm(train_batches, desc="Train"):
 
-            if batch_idx > (self.no_train_batches // (100 / self.config.percentage_data)):
-                break
+                if batch_idx > (self.no_train_batches // (100 / self.config.percentage_data)):
+                    break
 
-            # unpack batch
-            if self.config.dataset == 'MIMIC':
-                padded, mask, flat, los_labels, mort_labels, seq_lengths = batch
-                diagnoses = None
-            else:
-                padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
+                # unpack batch
+                if self.config.dataset == 'MIMIC':
+                    padded, mask, flat, los_labels, mort_labels, seq_lengths = batch
+                    diagnoses = None
+                else:
+                    padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
-            self.optimiser.zero_grad()
-            y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
-                                   self.config.sum_losses, self.config.loss)
-            loss.backward()
-            self.optimiser.step()
-            train_loss.append(loss.item())
+                self.optimiser.zero_grad()
+                y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
+                loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
+                                       self.config.sum_losses, self.config.loss)
+                loss.backward()
+                self.optimiser.step()
+                train_loss.append(loss.item())
 
-            if self.config.task in ('LoS', 'multitask'):
-                train_y_hat_los = np.append(train_y_hat_los, self.remove_padding(y_hat_los, mask.type(self.bool_type)))
-                train_y_los = np.append(train_y_los, self.remove_padding(los_labels, mask.type(self.bool_type)))
-            if self.config.task in ('mortality', 'multitask') and mort_labels.shape[1] >= mort_pred_time:
-                train_y_hat_mort = np.append(train_y_hat_mort,
-                                             self.remove_padding(y_hat_mort[:, mort_pred_time],
-                                                                 mask.type(self.bool_type)[:, mort_pred_time]))
-                train_y_mort = np.append(train_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
-                                                                           mask.type(self.bool_type)[:, mort_pred_time]))
+                if self.config.task in ('LoS', 'multitask'):
+                    train_y_hat_los = np.append(train_y_hat_los, self.remove_padding(y_hat_los, mask.type(self.bool_type)))
+                    train_y_los = np.append(train_y_los, self.remove_padding(los_labels, mask.type(self.bool_type)))
+                if self.config.task in ('mortality', 'multitask') and mort_labels.shape[1] >= mort_pred_time:
+                    train_y_hat_mort = np.append(train_y_hat_mort,
+                                                 self.remove_padding(y_hat_mort[:, mort_pred_time],
+                                                                     mask.type(self.bool_type)[:, mort_pred_time]))
+                    train_y_mort = np.append(train_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
+                                                                               mask.type(self.bool_type)[:, mort_pred_time]))
 
-            if self.config.intermediate_reporting and batch_idx % self.config.log_interval == 0 and batch_idx != 0:
+                if self.config.intermediate_reporting and batch_idx % self.config.log_interval == 0 and batch_idx != 0:
 
-                mean_loss_report = sum(train_loss[(batch_idx - self.config.log_interval):-1]) / self.config.log_interval
-                self.add_result(value=mean_loss_report,
-                                name='Intermediate_Train_Loss',
-                                counter=epoch + batch_idx / self.no_train_batches)  # check this
-                self.elog.print('Epoch: {} [{:5d}/{:5d} samples] | train loss: {:3.4f}'
-                                    .format(epoch,
-                                            batch_idx * self.config.batch_size,
-                                            batch_idx * self.no_train_batches,
-                                            mean_loss_report))
-                self.checkpoint_counter += 1
-
-            batch_idx += 1
+                    mean_loss_report = sum(train_loss[(batch_idx - self.config.log_interval):-1]) / self.config.log_interval
+                    self.add_result(value=mean_loss_report,
+                                    name='Intermediate_Train_Loss',
+                                    counter=epoch + batch_idx / self.no_train_batches)  # check this
+                    self.elog.print('Epoch: {} [{:5d}/{:5d} samples] | train loss: {:3.4f}'
+                                        .format(epoch,
+                                                batch_idx * self.config.batch_size,
+                                                batch_idx * self.no_train_batches,
+                                                mean_loss_report))
+                    self.checkpoint_counter += 1
+                prog_bar.set_postfix(loss=loss.item())
+                batch_idx += 1
 
         if not self.config.intermediate_reporting and self.config.mode == 'train':
 

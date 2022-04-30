@@ -38,8 +38,12 @@ def write_db(db_dir, timeseries_file_path):
 
 
 def test():
-    db_dir = "./eICU_data/train/timeseries.db"
-    timeseries_file_path = "./eICU_data/train/timeseries.csv"
+    # db_dir = "./eICU_data/train/timeseries.db"
+    # timeseries_file_path = "./eICU_data/train/timeseries.csv"
+    # db_dir = "./eICU_data/val/timeseries.db"
+    # timeseries_file_path = "./eICU_data/val/timeseries.csv"
+    db_dir = "./eICU_data/test/timeseries.db"
+    timeseries_file_path = "./eICU_data/test/timeseries.csv"
     write_db(db_dir=db_dir, timeseries_file_path=timeseries_file_path)
 
     patient_ids = ["2000228", "1836991", "1729377", "1585228", "3241336", "2787233", "1051213", "3157500", "2887689"]

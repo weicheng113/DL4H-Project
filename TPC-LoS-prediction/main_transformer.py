@@ -7,6 +7,7 @@ import pytorch_lightning as pl
 from eICU_preprocessing.run_all_preprocessing import eICU_path
 from eICU_preprocessing.eicu_dataset import EICUDataModule
 from models.experiment_module import ExperimentModule
+import torch
 
 
 def run_transformer():
@@ -23,10 +24,15 @@ def run_transformer():
 
 
 def run_best_transformer():
+    torch.multiprocessing.set_start_method('spawn')
+
     c = initialise_transformer_arguments()
     c['exp_name'] = 'Transformer'
     c['dataset'] = 'eICU'
     c = best_transformer(c)
+    c['mode'] = 'train'
+    # c['n_epochs'] = 2
+    c["shuffle_train"] = True
 
     log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
     transformer = BaselineTransformer(config=c,
@@ -78,5 +84,5 @@ if __name__ == '__main__':
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
     # run_transformer()
-    # run_best_transformer()
-    run_pl_best_transformer()
+    run_best_transformer()
+    # run_pl_best_transformer()

@@ -4,6 +4,7 @@ import torch
 from trixi.util.config import Config
 from models.trixi_experiment_adapter import TrixiExperimentAdapter
 from typing import Tuple, Optional
+from models.shuffle_train import shuffle_train
 
 
 class ExperimentModule(LightningModule):
@@ -53,6 +54,9 @@ class ExperimentModule(LightningModule):
         return {'loss': training_step_outputs['loss'].sum()}
 
     def on_train_epoch_start(self):
+        if self.current_epoch > 0 and self.config.shuffle_train:
+            # shuffle the order of the training data to make the batches different, this takes a bit of time
+            shuffle_train(self.config.eICU_path + 'train')
         self.trixi_experiment.train_epoch_start()
 
     def training_epoch_end(self, outputs):

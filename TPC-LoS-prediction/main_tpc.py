@@ -52,6 +52,9 @@ def run_best_tpc():
     # c['main_dropout_rate'] = 0.3
     # c['temp_dropout_rate'] = 0.1
     c = best_tpc(c)
+    c['mode'] = 'train'
+    # c['n_epochs'] = 2
+    c["shuffle_train"] = True
 
     log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
     tpc = TPC(config=c,
@@ -63,12 +66,14 @@ def run_best_tpc():
 
 
 def run_pl_best_tpc():
-    torch.multiprocessing.set_start_method('spawn')
+    # torch.multiprocessing.set_start_method('spawn')
 
     c = initialise_tpc_arguments()
     c['exp_name'] = 'TPC'
     c['dataset'] = 'eICU'
     c = best_tpc(c)
+    c['n_epochs'] = 2
+    # c["shuffle_train"] = True
 
     data_module = EICUDataModule(
         data_path=eICU_path,
@@ -88,9 +93,11 @@ def run_pl_best_tpc():
     # trainer = pl.Trainer(fast_dev_run=True, max_epochs=2)
     trainer = pl.Trainer(
         max_epochs=c.n_epochs,
-#         progress_bar_refresh_rate=20,
+        # progress_bar_refresh_rate=20,
         accelerator="gpu",
         devices=1,
+        # profiler="advanced",
+        # profiler="simple",
         # strategy="ddp"
     )
     trainer.fit(model=model_module, datamodule=data_module)
@@ -102,5 +109,6 @@ if __name__ == '__main__':
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
     # run_tpc()
-    # run_best_tpc()
-    run_pl_best_tpc()
+    # python -W ignore:semaphore_tracker:UserWarning main_tpc.py
+    run_best_tpc()
+    # run_pl_best_tpc()

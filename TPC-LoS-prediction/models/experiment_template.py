@@ -10,6 +10,10 @@ import os
 from models.shuffle_train import shuffle_train
 from eICU_preprocessing.run_all_preprocessing import eICU_path
 from MIMIC_preprocessing.run_all_preprocessing import MIMIC_path
+from timeit import default_timer as timer
+from datetime import timedelta
+from tqdm.auto import tqdm
+import time
 
 
 # view the results by running: python3 -m trixi.browser --port 8080 BASEDIR
@@ -93,11 +97,37 @@ class ExperimentTemplate(PytorchExperiment):
 
         return
 
+    @classmethod
+    def format_time(cls, t: float):
+        return time.strftime("%y-%m-%d_%H:%M:%S", time.localtime(t))
+
+    def _start_internal(self):
+        super(ExperimentTemplate, self)._start_internal()
+        self.start_time = timer()
+        self.epoch_start_time = timer()
+        print(f'Experiment started at {self.format_time(time.time())}.')
+
+    def _end_epoch_internal(self, epoch):
+        super(ExperimentTemplate, self)._end_epoch_internal(epoch)
+
+        epoch_end_time = timer()
+        print(f'Done epoch {epoch}, spent {timedelta(seconds=epoch_end_time-self.epoch_start_time)}.')
+        self.epoch_start_time = epoch_end_time
+
+    def _end_internal(self):
+        super(ExperimentTemplate, self)._end_internal()
+        end_time = timer()
+        print(f'Experiment ended at {self.format_time(time.time())}, spent {timedelta(seconds=end_time-self.start_time)}.')
+
     def train(self, epoch, mort_pred_time=24):
 
         self.model.train()
         if epoch > 0 and self.config.shuffle_train:
-            shuffle_train(self.config.eICU_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
+            shuffle_start = timer()
+            print(f'start shuffling training data.')
+            shuffle_train(self.data_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
+            shuffle_end = timer()
+            print(f'completed shuffling training data, spent {timedelta(seconds=shuffle_end-shuffle_start)}.')
         # train_batches = self.train_datareader.batch_gen(batch_size=self.config.batch_size)
         train_batches = self.train_datareader
         train_loss = []
@@ -106,7 +136,8 @@ class ExperimentTemplate(PytorchExperiment):
         train_y_hat_mort = np.array([])
         train_y_mort = np.array([])
 
-        for batch_idx, batch in enumerate(train_batches):
+        # for batch_idx, batch in enumerate(train_batches):
+        for batch_idx, batch in tqdm(enumerate(train_batches), desc="Train"):
 
             if batch_idx > (self.no_train_batches // (100 / self.config.percentage_data)):
                 break
@@ -120,7 +151,7 @@ class ExperimentTemplate(PytorchExperiment):
 
             self.optimiser.zero_grad()
             y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
+            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
                                    self.config.sum_losses, self.config.loss)
             loss.backward()
             self.optimiser.step()
@@ -164,7 +195,7 @@ class ExperimentTemplate(PytorchExperiment):
             self.elog.print('Epoch: {} | Train Loss: {:3.4f}'.format(epoch, mean_train_loss))
 
         if self.config.mode == 'test':
-            print('Done epoch {}'.format(epoch))
+            print(f'Done epoch {epoch}')
 
         if epoch == self.n_epochs - 1:
             if self.config.mode == 'train':
@@ -193,7 +224,7 @@ class ExperimentTemplate(PytorchExperiment):
             val_y_hat_mort = np.array([])
             val_y_mort = np.array([])
 
-            for batch in val_batches:
+            for batch in tqdm(val_batches, desc="Val"):
 
                 # unpack batch
                 if self.config.dataset == 'MIMIC':
@@ -203,7 +234,7 @@ class ExperimentTemplate(PytorchExperiment):
                     padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
                 y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-                loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
+                loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
                                        self.config.sum_losses, self.config.loss)
                 val_loss.append(loss.item())  # can't add the model.loss directly because it causes a memory leak
 
@@ -256,7 +287,7 @@ class ExperimentTemplate(PytorchExperiment):
         test_y_hat_mort = np.array([])
         test_y_mort = np.array([])
 
-        for batch in test_batches:
+        for batch in tqdm(test_batches, desc="Test"):
 
             # unpack batch
             if self.config.dataset == 'MIMIC':
@@ -266,7 +297,7 @@ class ExperimentTemplate(PytorchExperiment):
                 padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
             y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
+            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
                                    self.config.sum_losses, self.config.loss)
             test_loss.append(loss.item())  # can't add the model.loss directly because it causes a memory leak
 

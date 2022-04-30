@@ -21,8 +21,9 @@ def read_patients(db_dir, patient_ids):
     env.close()
 
 
+
 def write_db(db_dir, timeseries_file_path):
-    env = lmdb.open(path=db_dir, map_size=int(1e10), map_async=True, writemap=True)  # 10GB
+    env = lmdb.open(path=db_dir, map_size=int(2e10), map_async=True, writemap=True)  # 20GB
     with env.begin(write=True) as txn:
         with open(timeseries_file_path, 'r') as timeseries_file:
             # the first line is the feature names; we have to skip over this
@@ -37,8 +38,8 @@ def write_db(db_dir, timeseries_file_path):
 
 
 def test():
-    db_dir = "./eicu-data/train/timeseries.db"
-    timeseries_file_path = "./eicu-data/train/timeseries.csv"
+    db_dir = "./eICU_data/train/timeseries.db"
+    timeseries_file_path = "./eICU_data/train/timeseries.csv"
     write_db(db_dir=db_dir, timeseries_file_path=timeseries_file_path)
 
     patient_ids = ["2000228", "1836991", "1729377", "1585228", "3241336", "2787233", "1051213", "3157500", "2887689"]

@@ -1,6 +1,6 @@
 import torch
 # from eICU_preprocessing.reader import eICUReader
-from eICU_preprocessing.eicu_dataset import EICUReaderAdapter
+from eICU_preprocessing.eicu_dataset2 import EICUReaderAdapter2
 from MIMIC_preprocessing.reader import MIMICReader
 from eICU_preprocessing.split_train_test import create_folder
 import numpy as np
@@ -67,7 +67,7 @@ class ExperimentTemplate(PytorchExperiment):
             self.data_path = MIMIC_path
         else:
             # self.datareader = eICUReader
-            self.datareader = EICUReaderAdapter
+            self.datareader = EICUReaderAdapter2
             self.data_path = eICU_path
         # self.train_datareader = self.datareader(self.data_path + 'train', device=self.device,
         #                                    labs_only=self.config.labs_only, no_labs=self.config.no_labs)
@@ -76,7 +76,7 @@ class ExperimentTemplate(PytorchExperiment):
         # self.test_datareader = self.datareader(self.data_path + 'test', device=self.device,
         #                                   labs_only=self.config.labs_only, no_labs=self.config.no_labs)
         self.train_datareader = self.datareader(self.data_path + 'train', batch_size=self.config.batch_size,
-                                                device=self.device,
+                                                device=self.device, shuffle=True,
                                                 labs_only=self.config.labs_only, no_labs=self.config.no_labs)
         self.val_datareader = self.datareader(self.data_path + 'val', batch_size=self.config.batch_size_test,
                                               device=self.device,
@@ -122,12 +122,12 @@ class ExperimentTemplate(PytorchExperiment):
     def train(self, epoch, mort_pred_time=24):
 
         self.model.train()
-        if epoch > 0 and self.config.shuffle_train:
-            shuffle_start = timer()
-            print(f'start shuffling training data.')
-            shuffle_train(self.data_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
-            shuffle_end = timer()
-            print(f'completed shuffling training data, spent {timedelta(seconds=shuffle_end-shuffle_start)}.')
+        # if epoch > 0 and self.config.shuffle_train:
+        #     shuffle_start = timer()
+        #     print(f'start shuffling training data.')
+        #     shuffle_train(self.data_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
+        #     shuffle_end = timer()
+        #     print(f'completed shuffling training data, spent {timedelta(seconds=shuffle_end-shuffle_start)}.')
         # train_batches = self.train_datareader.batch_gen(batch_size=self.config.batch_size)
         train_batches = self.train_datareader
         train_loss = []
@@ -137,7 +137,8 @@ class ExperimentTemplate(PytorchExperiment):
         train_y_mort = np.array([])
 
         # for batch_idx, batch in enumerate(train_batches):
-        for batch_idx, batch in tqdm(enumerate(train_batches), desc="Train"):
+        batch_idx = 0
+        for batch in tqdm(train_batches, desc="Train"):
 
             if batch_idx > (self.no_train_batches // (100 / self.config.percentage_data)):
                 break
@@ -179,6 +180,8 @@ class ExperimentTemplate(PytorchExperiment):
                                             batch_idx * self.no_train_batches,
                                             mean_loss_report))
                 self.checkpoint_counter += 1
+
+            batch_idx += 1
 
         if not self.config.intermediate_reporting and self.config.mode == 'train':
 

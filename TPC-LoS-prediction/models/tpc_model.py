@@ -602,7 +602,7 @@ class TempPointConv(nn.Module):
                 next_X = X_orig
                 point_skip = None
         elif self.model_type == 'temp_only':
-            next_X = torch.stack(X_separated, dim=2).view(B, 2 * self.F, T)  # B * 2F * T
+            next_X = torch.stack(X_separated, dim=2).contiguous().view(B, 2 * self.F, T)  # B * 2F * T
             X_temp_orig = X_separated[0]  # skip connections for temp only model
             repeat_args = {'X_temp_orig': X_temp_orig,
                            'B': B,

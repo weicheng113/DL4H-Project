@@ -81,6 +81,8 @@ def best_cw_lstm(c):
     c['channelwise'] = True
     # carry over the best parameters from lstm, including global
     c = best_lstm(c)
+    c['batch_size'] = 160
+    c['batch_size_test'] = 160
     if c['dataset'] == 'eICU':
         c['hidden_size'] = 8
         if c['percentage_data'] < 25:

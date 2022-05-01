@@ -235,8 +235,8 @@ class EICUReaderAdapter2(torch.utils.data.DataLoader):
             batch_size=batch_size,
             shuffle=shuffle,
             collate_fn=dataset.collate,
-            # num_workers=0,
-            num_workers=2,
+            num_workers=0,
+            # num_workers=2,
             prefetch_factor=2,
             drop_last=True
         )
@@ -248,7 +248,7 @@ class EICUReaderAdapter2(torch.utils.data.DataLoader):
 
 def test():
     print(os.getcwd())
-    dataset = EICUDataset2(data_path='../eicu-data/train', device=torch.device('cpu'))
+    dataset = EICUDataset2(data_path='../eICU_data/train', device=torch.device('cpu'))
     # it_dataset = iter(dataset)
     # print(next(it_dataset))
 

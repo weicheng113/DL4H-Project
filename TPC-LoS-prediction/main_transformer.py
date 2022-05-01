@@ -67,15 +67,34 @@ def run_pl_best_transformer():
         model=model, config=c, log_folder_path=log_folder_path)
 
     pl.seed_everything(seed=42)
-    # trainer = pl.Trainer(fast_dev_run=True, max_epochs=2)
-    trainer = pl.Trainer(
-        max_epochs=c.n_epochs,
-        # progress_bar_refresh_rate=20,
-        accelerator="gpu",
-        devices=1,
-        # strategy="ddp"
-    )
+    trainer = pl.Trainer(fast_dev_run=True, max_epochs=2)
+    # trainer = pl.Trainer(
+    #     max_epochs=c.n_epochs,
+    #     # progress_bar_refresh_rate=20,
+    #     accelerator="gpu",
+    #     devices=1,
+    #     # strategy="ddp"
+    # )
     trainer.fit(model=model_module, datamodule=data_module)
+
+
+def reload_best_tpc_and_test():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_transformer_arguments()
+    c['exp_name'] = 'Transformer'
+    c['dataset'] = 'eICU'
+    c = best_transformer(c)
+
+    log_folder_path = create_folder('./experiment_results/test', c.exp_name)
+    transformer = BaselineTransformer(
+        config=c,
+        n_epochs=c.n_epochs,
+        name=c.exp_name,
+        base_dir=log_folder_path,
+        explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
+        resume='./experiment_results/train/Transformer/2022-04-30_1002251')
+    transformer.run_test()
 
 
 if __name__ == '__main__':
@@ -84,5 +103,6 @@ if __name__ == '__main__':
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
     # run_transformer()
-    run_best_transformer()
+    # run_best_transformer()
     # run_pl_best_transformer()
+    reload_best_tpc_and_test()

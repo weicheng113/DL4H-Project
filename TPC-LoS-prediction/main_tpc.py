@@ -65,6 +65,24 @@ def run_best_tpc():
     tpc.run()
 
 
+def reload_best_tpc_and_test():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'TPC'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+
+    log_folder_path = create_folder('./experiment_results/test', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
+              resume='./experiment_results/train/TPC/2022-04-30_0515561')
+    tpc.run_test()
+
+
 def run_pl_best_tpc():
     # torch.multiprocessing.set_start_method('spawn')
 
@@ -103,6 +121,106 @@ def run_pl_best_tpc():
     trainer.fit(model=model_module, datamodule=data_module)
 
 
+def run_best_pointwise_only():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'PointwiseOnly'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c['mode'] = 'train'
+    c["shuffle_train"] = True
+    c["model_type"] = "pointwise_only"
+    c['batch_size'] = 512
+    c['batch_size_test'] = 512
+
+    log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'})
+    tpc.run()
+
+
+def run_best_temp_only():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'TempOnly'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c['mode'] = 'train'
+    c["shuffle_train"] = True
+    c['model_type'] = 'temp_only'
+
+    log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'})
+    tpc.run()
+
+
+def reload_best_temp_only_and_test():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'TempOnly'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c['model_type'] = 'temp_only'
+
+    log_folder_path = create_folder('./experiment_results/test', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
+              resume='./experiment_results/train/TempOnly/2022-05-01_0434041')
+    tpc.run_test()
+
+
+def run_best_tpc_no_skip():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'TPCNoSkip'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c['mode'] = 'train'
+    c["shuffle_train"] = True
+    c['no_skip_connections'] = True
+
+    log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'})
+    tpc.run()
+
+
+def reload_best_tpc_no_skip_and_test():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'TPCNoSkip'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c['no_skip_connections'] = True
+
+    log_folder_path = create_folder('./experiment_results/test', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
+              resume='./experiment_results/train/TPCNoSkip/2022-05-01_0729111')
+    tpc.run_test()
+
+
 if __name__ == '__main__':
     # Note: modified models.initialise_arguments.py gen_config(parser):
     # args = parser.parse_args() to args = parser.parse_args(args=[])
@@ -110,5 +228,11 @@ if __name__ == '__main__':
 
     # run_tpc()
     # python -W ignore:semaphore_tracker:UserWarning main_tpc.py
-    run_best_tpc()
+    # run_best_tpc()
     # run_pl_best_tpc()
+    # reload_best_tpc_and_test()
+    run_best_pointwise_only()
+    # run_best_temp_only()
+    # reload_best_temp_only_and_test()
+    # run_best_tpc_no_skip()
+    # reload_best_tpc_no_skip_and_test()

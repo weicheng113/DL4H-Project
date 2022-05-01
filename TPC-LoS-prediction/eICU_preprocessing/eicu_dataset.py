@@ -242,7 +242,7 @@ class EICUReaderAdapter:
 
 
 def test():
-    dataset = EICUDataset('../eicu-data/train', device=torch.device('cpu'))
+    dataset = EICUDataset('../eICU_data/train', device=torch.device('cpu'))
     # it_dataset = iter(dataset)
     # print(next(it_dataset))
 

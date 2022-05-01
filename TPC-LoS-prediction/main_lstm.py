@@ -1,7 +1,8 @@
 from eICU_preprocessing.split_train_test import create_folder
 from models.initialise_arguments import initialise_lstm_arguments
 from models.run_lstm import BaselineLSTM
-from models.final_experiment_scripts.best_hyperparameters import best_lstm
+from models.final_experiment_scripts.best_hyperparameters import best_cw_lstm
+import torch
 
 
 def run_lstm():
@@ -17,11 +18,15 @@ def run_lstm():
     baseline_lstm.run()
 
 
-def run_best_lstm():
+def run_best_cw_lstm():
+    torch.multiprocessing.set_start_method('spawn')
+
     c = initialise_lstm_arguments()
-    c['exp_name'] = 'StandardLSTM'
+    c['exp_name'] = 'ChannelwiseLSTM'
     c['dataset'] = 'eICU'
-    c = best_lstm(c)
+    c = best_cw_lstm(c)
+    c['mode'] = 'train'
+    c["shuffle_train"] = True
 
     log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
     baseline_lstm = BaselineLSTM(config=c,
@@ -38,4 +43,4 @@ if __name__ == '__main__':
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
     # run_lstm()
-    run_best_lstm()
+    run_best_cw_lstm()

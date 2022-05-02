@@ -143,6 +143,27 @@ def run_best_pointwise_only():
     tpc.run()
 
 
+def reload_best_pointwise_only_and_test():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'PointwiseOnly'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c["model_type"] = "pointwise_only"
+    c['batch_size'] = 512
+    c['batch_size_test'] = 512
+
+    log_folder_path = create_folder('./experiment_results/test', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
+              resume='./experiment_results/train/PointwiseOnly/2022-05-01_1039241')
+    tpc.run_test()
+
+
 def run_best_temp_only():
     torch.multiprocessing.set_start_method('spawn')
 
@@ -231,7 +252,8 @@ if __name__ == '__main__':
     # run_best_tpc()
     # run_pl_best_tpc()
     # reload_best_tpc_and_test()
-    run_best_pointwise_only()
+    # run_best_pointwise_only()
+    reload_best_pointwise_only_and_test()
     # run_best_temp_only()
     # reload_best_temp_only_and_test()
     # run_best_tpc_no_skip()

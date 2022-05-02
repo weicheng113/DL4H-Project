@@ -78,7 +78,7 @@ def run_pl_best_transformer():
     trainer.fit(model=model_module, datamodule=data_module)
 
 
-def reload_best_tpc_and_test():
+def reload_best_transformer_and_test():
     torch.multiprocessing.set_start_method('spawn')
 
     c = initialise_transformer_arguments()
@@ -105,4 +105,4 @@ if __name__ == '__main__':
     # run_transformer()
     # run_best_transformer()
     # run_pl_best_transformer()
-    reload_best_tpc_and_test()
+    reload_best_transformer_and_test()

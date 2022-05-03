@@ -1,0 +1,170 @@
+2022-05-01 00:47:03,067 - INFO - Config:
+2022-05-01 00:47:03,067 - INFO - {
+    "L2_regularisation": 0,
+    "alpha": 100,
+    "base_dir": "models/experiments/final/eICU/LoS/Transformer",
+    "batch_norm": "mybatchnorm",
+    "batch_size": 64,
+    "batch_size_test": 32,
+    "batchnorm": "mybatchnorm",
+    "d_model": 16,
+    "dataset": "eICU",
+    "diagnosis_size": 64,
+    "disable_cuda": false,
+    "exp_name": "Transformer",
+    "feedforward_size": 256,
+    "intermediate_reporting": false,
+    "labs_only": false,
+    "last_linear_size": 17,
+    "learning_rate": 0.00017,
+    "loss": "msle",
+    "main_dropout_rate": 0.45,
+    "mode": "train",
+    "n_epochs": 15,
+    "n_heads": 2,
+    "n_layers": 6,
+    "name": "Transformer",
+    "no_diag": false,
+    "no_exp": false,
+    "no_labs": false,
+    "no_mask": false,
+    "percentage_data": 100.0,
+    "positional_encoding": false,
+    "save_results_csv": false,
+    "seed": 1836135432,
+    "shuffle_train": true,
+    "sum_losses": true,
+    "task": "LoS",
+    "trans_dropout_rate": 0
+}
+2022-05-01 00:47:07,618 - INFO - Experiment set up.
+2022-05-01 00:47:11,012 - INFO - Transformer(
+  (relu): ReLU()
+  (sigmoid): Sigmoid()
+  (hardtanh): Hardtanh(min_val=0.020833333333333332, max_val=100)
+  (trans_dropout): Dropout(p=0, inplace=False)
+  (main_dropout): Dropout(p=0.45, inplace=False)
+  (msle_loss): MSLELoss(
+    (squared_error): MSELoss()
+  )
+  (mse_loss): MSELoss(
+    (squared_error): MSELoss()
+  )
+  (bce_loss): BCELoss()
+  (empty_module): EmptyModule()
+  (transformer): TransformerEncoder(
+    (input_embedding): Conv1d(176, 16, kernel_size=(1,), stride=(1,))
+    (pos_encoder): PositionalEncoding()
+    (trans_encoder_layer): TransformerEncoderLayer(
+      (self_attn): MultiheadAttention(
+        (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+      )
+      (linear1): Linear(in_features=16, out_features=256, bias=True)
+      (dropout): Dropout(p=0, inplace=False)
+      (linear2): Linear(in_features=256, out_features=16, bias=True)
+      (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+      (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+      (dropout1): Dropout(p=0, inplace=False)
+      (dropout2): Dropout(p=0, inplace=False)
+    )
+    (transformer_encoder): TransformerEncoder(
+      (layers): ModuleList(
+        (0): TransformerEncoderLayer(
+          (self_attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+          )
+          (linear1): Linear(in_features=16, out_features=256, bias=True)
+          (dropout): Dropout(p=0, inplace=False)
+          (linear2): Linear(in_features=256, out_features=16, bias=True)
+          (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (dropout1): Dropout(p=0, inplace=False)
+          (dropout2): Dropout(p=0, inplace=False)
+        )
+        (1): TransformerEncoderLayer(
+          (self_attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+          )
+          (linear1): Linear(in_features=16, out_features=256, bias=True)
+          (dropout): Dropout(p=0, inplace=False)
+          (linear2): Linear(in_features=256, out_features=16, bias=True)
+          (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (dropout1): Dropout(p=0, inplace=False)
+          (dropout2): Dropout(p=0, inplace=False)
+        )
+        (2): TransformerEncoderLayer(
+          (self_attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+          )
+          (linear1): Linear(in_features=16, out_features=256, bias=True)
+          (dropout): Dropout(p=0, inplace=False)
+          (linear2): Linear(in_features=256, out_features=16, bias=True)
+          (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (dropout1): Dropout(p=0, inplace=False)
+          (dropout2): Dropout(p=0, inplace=False)
+        )
+        (3): TransformerEncoderLayer(
+          (self_attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+          )
+          (linear1): Linear(in_features=16, out_features=256, bias=True)
+          (dropout): Dropout(p=0, inplace=False)
+          (linear2): Linear(in_features=256, out_features=16, bias=True)
+          (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (dropout1): Dropout(p=0, inplace=False)
+          (dropout2): Dropout(p=0, inplace=False)
+        )
+        (4): TransformerEncoderLayer(
+          (self_attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+          )
+          (linear1): Linear(in_features=16, out_features=256, bias=True)
+          (dropout): Dropout(p=0, inplace=False)
+          (linear2): Linear(in_features=256, out_features=16, bias=True)
+          (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (dropout1): Dropout(p=0, inplace=False)
+          (dropout2): Dropout(p=0, inplace=False)
+        )
+        (5): TransformerEncoderLayer(
+          (self_attn): MultiheadAttention(
+            (out_proj): NonDynamicallyQuantizableLinear(in_features=16, out_features=16, bias=True)
+          )
+          (linear1): Linear(in_features=16, out_features=256, bias=True)
+          (dropout): Dropout(p=0, inplace=False)
+          (linear2): Linear(in_features=256, out_features=16, bias=True)
+          (norm1): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (norm2): LayerNorm((16,), eps=1e-05, elementwise_affine=True)
+          (dropout1): Dropout(p=0, inplace=False)
+          (dropout2): Dropout(p=0, inplace=False)
+        )
+      )
+    )
+  )
+  (diagnosis_encoder): Linear(in_features=293, out_features=64, bias=True)
+  (bn_diagnosis_encoder): MyBatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (point_los): Linear(in_features=145, out_features=17, bias=True)
+  (point_mort): Linear(in_features=145, out_features=17, bias=True)
+  (bn_point_last_los): MyBatchNorm1d(17, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn_point_last_mort): MyBatchNorm1d(17, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (point_final_los): Linear(in_features=17, out_features=1, bias=True)
+  (point_final_mort): Linear(in_features=17, out_features=1, bias=True)
+)
+2022-05-01 00:47:11,013 - INFO - Loaded existing config from: ./experiment_results/train/Transformer/2022-04-30_1002251
+2022-05-01 00:47:11,033 - INFO - Loaded existing checkpoint from: ./experiment_results/train/Transformer/2022-04-30_1002251/checkpoint/checkpoint_last.pth.tar
+2022-05-01 00:48:48,651 - INFO - Custom bins confusion matrix:
+2022-05-01 00:48:48,652 - INFO - [[206555 185642  28608  13339   6980   3150   1775    689    377     17]
+ [ 68889 124479  32427  19282  10947   4881   2289   1063    574      0]
+ [ 26912  69312  24881  18674  11710   5762   2569   1255    613      0]
+ [ 12452  39683  17749  14594  11255   6110   3012   1627    755      5]
+ [  6133  24043  12612  11761   9891   5656   3136   1507    919      0]
+ [  3520  15176   8730   9344   7834   5229   3116   1332   1014      0]
+ [  2018  10032   6697   7156   6441   4866   2837   1335    985      0]
+ [  1507   6837   5363   5412   5499   4214   2445   1189    924      0]
+ [  3951  17491  14635  17928  18501  14554   9902   5221   4246      0]
+ [  1775   8712   7785  10805  11521  12188   8094   5934   5578      0]]
+2022-05-01 00:48:50,691 - INFO - Test Loss: 89.7208
+2022-05-01 00:48:50,692 - INFO - Testing ended. Results stored =)

@@ -105,19 +105,19 @@ class ExperimentTemplate(PytorchExperiment):
         super(ExperimentTemplate, self)._start_internal()
         self.start_time = timer()
         self.epoch_start_time = timer()
-        print(f'Experiment started at {self.format_time(time.time())}.')
+        self.elog.print(f'Experiment started at {self.format_time(time.time())}.')
 
     def _end_epoch_internal(self, epoch):
         super(ExperimentTemplate, self)._end_epoch_internal(epoch)
 
         epoch_end_time = timer()
-        print(f'Done epoch {epoch}, spent {timedelta(seconds=epoch_end_time-self.epoch_start_time)}.')
+        self.elog.print(f'Done epoch {epoch}, spent {timedelta(seconds=epoch_end_time-self.epoch_start_time)}.')
         self.epoch_start_time = epoch_end_time
 
     def _end_internal(self):
         super(ExperimentTemplate, self)._end_internal()
         end_time = timer()
-        print(f'Experiment ended at {self.format_time(time.time())}, spent {timedelta(seconds=end_time-self.start_time)}.')
+        self.elog.print(f'Experiment ended at {self.format_time(time.time())}, spent {timedelta(seconds=end_time-self.start_time)}.')
 
     def train(self, epoch, mort_pred_time=24):
 
@@ -186,7 +186,7 @@ class ExperimentTemplate(PytorchExperiment):
 
         if not self.config.intermediate_reporting and self.config.mode == 'train':
 
-            print('Train Metrics:')
+            self.elog.print('Train Metrics:')
             mean_train_loss = sum(train_loss) / len(train_loss)
             if self.config.task in ('LoS', 'multitask'):
                 los_metrics_list = print_metrics_regression(train_y_los, train_y_hat_los, elog=self.elog) # order: mad, mse, mape, msle, r2, kappa
@@ -199,7 +199,7 @@ class ExperimentTemplate(PytorchExperiment):
             self.elog.print('Epoch: {} | Train Loss: {:3.4f}'.format(epoch, mean_train_loss))
 
         if self.config.mode == 'test':
-            print(f'Done epoch {epoch}')
+            self.elog.print(f'Done epoch {epoch}')
 
         if epoch == self.n_epochs - 1:
             if self.config.mode == 'train':
@@ -253,7 +253,7 @@ class ExperimentTemplate(PytorchExperiment):
                     val_y_mort = np.append(val_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
                                                                            mask.type(self.bool_type)[:, mort_pred_time]))
 
-            print('Validation Metrics:')
+            self.elog.print('Validation Metrics:')
             mean_val_loss = sum(val_loss) / len(val_loss)
             if self.config.task in ('LoS', 'multitask'):
                 los_metrics_list = print_metrics_regression(val_y_los, val_y_hat_los, elog=self.elog) # order: mad, mse, mape, msle, r2, kappa
@@ -316,7 +316,7 @@ class ExperimentTemplate(PytorchExperiment):
                 test_y_mort = np.append(test_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
                                                                          mask.type(self.bool_type)[:, mort_pred_time]))
 
-        print('Test Metrics:')
+        self.elog.print('Test Metrics:')
         mean_test_loss = sum(test_loss) / len(test_loss)
 
         if self.config.task in ('LoS', 'multitask'):

@@ -31,7 +31,8 @@ def run_best_transformer():
     c['dataset'] = 'eICU'
     c = best_transformer(c)
     c['mode'] = 'train'
-    # c['n_epochs'] = 2
+    c['batch_size'] = 32
+    c['n_epochs'] = 30
     c["shuffle_train"] = True
 
     log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
@@ -103,6 +104,6 @@ if __name__ == '__main__':
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
     # run_transformer()
-    # run_best_transformer()
+    run_best_transformer()
     # run_pl_best_transformer()
-    reload_best_transformer_and_test()
+    # reload_best_transformer_and_test()

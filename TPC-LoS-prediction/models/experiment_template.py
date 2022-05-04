@@ -1,6 +1,6 @@
 import torch
 # from eICU_preprocessing.reader import eICUReader
-from eICU_preprocessing.eicu_dataset import EICUReaderAdapter
+from eICU_preprocessing.eicu_dataset2 import EICUReaderAdapter2
 from MIMIC_preprocessing.reader import MIMICReader
 from eICU_preprocessing.split_train_test import create_folder
 import numpy as np
@@ -10,6 +10,10 @@ import os
 from models.shuffle_train import shuffle_train
 from eICU_preprocessing.run_all_preprocessing import eICU_path
 from MIMIC_preprocessing.run_all_preprocessing import MIMIC_path
+from timeit import default_timer as timer
+from datetime import timedelta
+from tqdm.auto import tqdm
+import time
 
 
 # view the results by running: python3 -m trixi.browser --port 8080 BASEDIR
@@ -63,7 +67,7 @@ class ExperimentTemplate(PytorchExperiment):
             self.data_path = MIMIC_path
         else:
             # self.datareader = eICUReader
-            self.datareader = EICUReaderAdapter
+            self.datareader = EICUReaderAdapter2
             self.data_path = eICU_path
         # self.train_datareader = self.datareader(self.data_path + 'train', device=self.device,
         #                                    labs_only=self.config.labs_only, no_labs=self.config.no_labs)
@@ -72,7 +76,7 @@ class ExperimentTemplate(PytorchExperiment):
         # self.test_datareader = self.datareader(self.data_path + 'test', device=self.device,
         #                                   labs_only=self.config.labs_only, no_labs=self.config.no_labs)
         self.train_datareader = self.datareader(self.data_path + 'train', batch_size=self.config.batch_size,
-                                                device=self.device,
+                                                device=self.device, shuffle=True,
                                                 labs_only=self.config.labs_only, no_labs=self.config.no_labs)
         self.val_datareader = self.datareader(self.data_path + 'val', batch_size=self.config.batch_size_test,
                                               device=self.device,
@@ -93,11 +97,37 @@ class ExperimentTemplate(PytorchExperiment):
 
         return
 
+    @classmethod
+    def format_time(cls, t: float):
+        return time.strftime("%y-%m-%d_%H:%M:%S", time.localtime(t))
+
+    def _start_internal(self):
+        super(ExperimentTemplate, self)._start_internal()
+        self.start_time = timer()
+        self.epoch_start_time = timer()
+        self.elog.print(f'Experiment started at {self.format_time(time.time())}.')
+
+    def _end_epoch_internal(self, epoch):
+        super(ExperimentTemplate, self)._end_epoch_internal(epoch)
+
+        epoch_end_time = timer()
+        self.elog.print(f'Done epoch {epoch}, spent {timedelta(seconds=epoch_end_time-self.epoch_start_time)}.')
+        self.epoch_start_time = epoch_end_time
+
+    def _end_internal(self):
+        super(ExperimentTemplate, self)._end_internal()
+        end_time = timer()
+        self.elog.print(f'Experiment ended at {self.format_time(time.time())}, spent {timedelta(seconds=end_time-self.start_time)}.')
+
     def train(self, epoch, mort_pred_time=24):
 
         self.model.train()
-        if epoch > 0 and self.config.shuffle_train:
-            shuffle_train(self.config.eICU_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
+        # if epoch > 0 and self.config.shuffle_train:
+        #     shuffle_start = timer()
+        #     print(f'start shuffling training data.')
+        #     shuffle_train(self.data_path + 'train')  # shuffle the order of the training data to make the batches different, this takes a bit of time
+        #     shuffle_end = timer()
+        #     print(f'completed shuffling training data, spent {timedelta(seconds=shuffle_end-shuffle_start)}.')
         # train_batches = self.train_datareader.batch_gen(batch_size=self.config.batch_size)
         train_batches = self.train_datareader
         train_loss = []
@@ -106,52 +136,57 @@ class ExperimentTemplate(PytorchExperiment):
         train_y_hat_mort = np.array([])
         train_y_mort = np.array([])
 
-        for batch_idx, batch in enumerate(train_batches):
+        # for batch_idx, batch in enumerate(train_batches):
+        with tqdm(train_batches, desc="Train") as prog_bar:
+            batch_idx = 0
+            for batch in tqdm(train_batches, desc="Train"):
 
-            if batch_idx > (self.no_train_batches // (100 / self.config.percentage_data)):
-                break
+                if batch_idx > (self.no_train_batches // (100 / self.config.percentage_data)):
+                    break
 
-            # unpack batch
-            if self.config.dataset == 'MIMIC':
-                padded, mask, flat, los_labels, mort_labels, seq_lengths = batch
-                diagnoses = None
-            else:
-                padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
+                # unpack batch
+                if self.config.dataset == 'MIMIC':
+                    padded, mask, flat, los_labels, mort_labels, seq_lengths = batch
+                    diagnoses = None
+                else:
+                    padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
-            self.optimiser.zero_grad()
-            y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
-                                   self.config.sum_losses, self.config.loss)
-            loss.backward()
-            self.optimiser.step()
-            train_loss.append(loss.item())
+                self.optimiser.zero_grad()
+                y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
+                loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
+                                       self.config.sum_losses, self.config.loss)
+                loss.backward()
+                self.optimiser.step()
+                train_loss.append(loss.item())
 
-            if self.config.task in ('LoS', 'multitask'):
-                train_y_hat_los = np.append(train_y_hat_los, self.remove_padding(y_hat_los, mask.type(self.bool_type)))
-                train_y_los = np.append(train_y_los, self.remove_padding(los_labels, mask.type(self.bool_type)))
-            if self.config.task in ('mortality', 'multitask') and mort_labels.shape[1] >= mort_pred_time:
-                train_y_hat_mort = np.append(train_y_hat_mort,
-                                             self.remove_padding(y_hat_mort[:, mort_pred_time],
-                                                                 mask.type(self.bool_type)[:, mort_pred_time]))
-                train_y_mort = np.append(train_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
-                                                                           mask.type(self.bool_type)[:, mort_pred_time]))
+                if self.config.task in ('LoS', 'multitask'):
+                    train_y_hat_los = np.append(train_y_hat_los, self.remove_padding(y_hat_los, mask.type(self.bool_type)))
+                    train_y_los = np.append(train_y_los, self.remove_padding(los_labels, mask.type(self.bool_type)))
+                if self.config.task in ('mortality', 'multitask') and mort_labels.shape[1] >= mort_pred_time:
+                    train_y_hat_mort = np.append(train_y_hat_mort,
+                                                 self.remove_padding(y_hat_mort[:, mort_pred_time],
+                                                                     mask.type(self.bool_type)[:, mort_pred_time]))
+                    train_y_mort = np.append(train_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
+                                                                               mask.type(self.bool_type)[:, mort_pred_time]))
 
-            if self.config.intermediate_reporting and batch_idx % self.config.log_interval == 0 and batch_idx != 0:
+                if self.config.intermediate_reporting and batch_idx % self.config.log_interval == 0 and batch_idx != 0:
 
-                mean_loss_report = sum(train_loss[(batch_idx - self.config.log_interval):-1]) / self.config.log_interval
-                self.add_result(value=mean_loss_report,
-                                name='Intermediate_Train_Loss',
-                                counter=epoch + batch_idx / self.no_train_batches)  # check this
-                self.elog.print('Epoch: {} [{:5d}/{:5d} samples] | train loss: {:3.4f}'
-                                    .format(epoch,
-                                            batch_idx * self.config.batch_size,
-                                            batch_idx * self.no_train_batches,
-                                            mean_loss_report))
-                self.checkpoint_counter += 1
+                    mean_loss_report = sum(train_loss[(batch_idx - self.config.log_interval):-1]) / self.config.log_interval
+                    self.add_result(value=mean_loss_report,
+                                    name='Intermediate_Train_Loss',
+                                    counter=epoch + batch_idx / self.no_train_batches)  # check this
+                    self.elog.print('Epoch: {} [{:5d}/{:5d} samples] | train loss: {:3.4f}'
+                                        .format(epoch,
+                                                batch_idx * self.config.batch_size,
+                                                batch_idx * self.no_train_batches,
+                                                mean_loss_report))
+                    self.checkpoint_counter += 1
+                prog_bar.set_postfix(loss=loss.item())
+                batch_idx += 1
 
         if not self.config.intermediate_reporting and self.config.mode == 'train':
 
-            print('Train Metrics:')
+            self.elog.print('Train Metrics:')
             mean_train_loss = sum(train_loss) / len(train_loss)
             if self.config.task in ('LoS', 'multitask'):
                 los_metrics_list = print_metrics_regression(train_y_los, train_y_hat_los, elog=self.elog) # order: mad, mse, mape, msle, r2, kappa
@@ -164,7 +199,7 @@ class ExperimentTemplate(PytorchExperiment):
             self.elog.print('Epoch: {} | Train Loss: {:3.4f}'.format(epoch, mean_train_loss))
 
         if self.config.mode == 'test':
-            print('Done epoch {}'.format(epoch))
+            self.elog.print(f'Done epoch {epoch}')
 
         if epoch == self.n_epochs - 1:
             if self.config.mode == 'train':
@@ -193,7 +228,7 @@ class ExperimentTemplate(PytorchExperiment):
             val_y_hat_mort = np.array([])
             val_y_mort = np.array([])
 
-            for batch in val_batches:
+            for batch in tqdm(val_batches, desc="Val"):
 
                 # unpack batch
                 if self.config.dataset == 'MIMIC':
@@ -203,7 +238,7 @@ class ExperimentTemplate(PytorchExperiment):
                     padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
                 y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-                loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
+                loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
                                        self.config.sum_losses, self.config.loss)
                 val_loss.append(loss.item())  # can't add the model.loss directly because it causes a memory leak
 
@@ -218,7 +253,7 @@ class ExperimentTemplate(PytorchExperiment):
                     val_y_mort = np.append(val_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
                                                                            mask.type(self.bool_type)[:, mort_pred_time]))
 
-            print('Validation Metrics:')
+            self.elog.print('Validation Metrics:')
             mean_val_loss = sum(val_loss) / len(val_loss)
             if self.config.task in ('LoS', 'multitask'):
                 los_metrics_list = print_metrics_regression(val_y_los, val_y_hat_los, elog=self.elog) # order: mad, mse, mape, msle, r2, kappa
@@ -256,7 +291,7 @@ class ExperimentTemplate(PytorchExperiment):
         test_y_hat_mort = np.array([])
         test_y_mort = np.array([])
 
-        for batch in test_batches:
+        for batch in tqdm(test_batches, desc="Test"):
 
             # unpack batch
             if self.config.dataset == 'MIMIC':
@@ -266,7 +301,7 @@ class ExperimentTemplate(PytorchExperiment):
                 padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
 
             y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
-            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths, self.device,
+            loss = self.model.loss(y_hat_los, y_hat_mort, los_labels, mort_labels, mask, seq_lengths,
                                    self.config.sum_losses, self.config.loss)
             test_loss.append(loss.item())  # can't add the model.loss directly because it causes a memory leak
 
@@ -281,7 +316,7 @@ class ExperimentTemplate(PytorchExperiment):
                 test_y_mort = np.append(test_y_mort, self.remove_padding(mort_labels[:, mort_pred_time],
                                                                          mask.type(self.bool_type)[:, mort_pred_time]))
 
-        print('Test Metrics:')
+        self.elog.print('Test Metrics:')
         mean_test_loss = sum(test_loss) / len(test_loss)
 
         if self.config.task in ('LoS', 'multitask'):

@@ -6,5 +6,6 @@ MIMIC_data
 __pycache__
 figures
 *.csv
-experiment_results
 notebooks/experiment_dir
+lightning_logs
+/experiment_results/**/*.tar

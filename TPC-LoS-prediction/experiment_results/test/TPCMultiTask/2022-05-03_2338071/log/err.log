@@ -1,0 +1,7 @@
+2022-05-03 23:40:08,141 - INFO -   File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/trixi/experiment/experiment.py", line 133, in run_test
+    self.test()
+
+  File "/home/ubuntu/DL4H-Project/TPC-LoS-prediction/models/experiment_template.py", line 363, in test
+    with open(self.config.base_dir + '/results.csv', 'a') as f:
+
+2022-05-03 23:40:08,141 - INFO - FileNotFoundError(2, 'No such file or directory')

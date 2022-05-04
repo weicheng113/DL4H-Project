@@ -309,6 +309,27 @@ def run_best_tpc_mse():
     tpc.run()
 
 
+def reload_best_tpc_mse_and_test():
+    torch.multiprocessing.set_start_method('spawn')
+
+    c = initialise_tpc_arguments()
+    c['exp_name'] = 'TPC'
+    c['dataset'] = 'eICU'
+    c = best_tpc(c)
+    c["loss"] = "mse"
+    c['batch_size'] = 24
+    c["batch_size_test"] = 24
+
+    log_folder_path = create_folder('experiment_results/test/TPCmse', c.exp_name)
+    tpc = TPC(config=c,
+              n_epochs=c.n_epochs,
+              name=c.exp_name,
+              base_dir=log_folder_path,
+              explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
+              resume='./experiment_results/train/TPCmse/2022-05-03_2348021')
+    tpc.run_test()
+
+
 if __name__ == '__main__':
     # Note: modified models.initialise_arguments.py gen_config(parser):
     # args = parser.parse_args() to args = parser.parse_args(args=[])
@@ -319,7 +340,8 @@ if __name__ == '__main__':
     # run_best_tpc()
     # run_best_tpc_multitask()
     # reload_best_tpc_multitask_and_test()
-    run_best_tpc_mse()
+    # run_best_tpc_mse()
+    reload_best_tpc_mse_and_test()
     # run_pl_best_tpc()
     # reload_best_tpc_and_test()
     # run_best_pointwise_only()

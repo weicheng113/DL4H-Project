@@ -26,7 +26,7 @@ def mean_squared_logarithmic_error(y_true, y_pred):
     return np.mean(np.square(np.log(y_true/y_pred)))
 
 def print_metrics_regression(y_true, predictions, verbose=1, elog=None):
-    print('==> Length of Stay:')
+    elog.print('==> Length of Stay:')
     y_true_bins = [get_bin_custom(x, CustomBins.nbins) for x in y_true]
     prediction_bins = [get_bin_custom(x, CustomBins.nbins) for x in predictions]
     cf = metrics.confusion_matrix(y_true_bins, prediction_bins)
@@ -34,8 +34,8 @@ def print_metrics_regression(y_true, predictions, verbose=1, elog=None):
         elog.print('Custom bins confusion matrix:')
         elog.print(cf)
     elif verbose:
-        print('Custom bins confusion matrix:')
-        print(cf)
+        elog.print('Custom bins confusion matrix:')
+        elog.print(cf)
 
     kappa = metrics.cohen_kappa_score(y_true_bins, prediction_bins, weights='linear')
     mad = metrics.mean_absolute_error(y_true, predictions)
@@ -45,17 +45,17 @@ def print_metrics_regression(y_true, predictions, verbose=1, elog=None):
     r2 = metrics.r2_score(y_true, predictions)
 
     if verbose:
-        print('Mean absolute deviation (MAD) = {}'.format(mad))
-        print('Mean squared error (MSE) = {}'.format(mse))
-        print('Mean absolute percentage error (MAPE) = {}'.format(mape))
-        print('Mean squared logarithmic error (MSLE) = {}'.format(msle))
-        print('R^2 Score = {}'.format(r2))
-        print('Cohen kappa score = {}'.format(kappa))
+        elog.print('Mean absolute deviation (MAD) = {}'.format(mad))
+        elog.print('Mean squared error (MSE) = {}'.format(mse))
+        elog.print('Mean absolute percentage error (MAPE) = {}'.format(mape))
+        elog.print('Mean squared logarithmic error (MSLE) = {}'.format(msle))
+        elog.print('R^2 Score = {}'.format(r2))
+        elog.print('Cohen kappa score = {}'.format(kappa))
 
     return [mad, mse, mape, msle, r2, kappa]
 
 def print_metrics_mortality(y_true, prediction_probs, verbose=1, elog=None):
-    print('==> Mortality:')
+    elog.print('==> Mortality:')
     prediction_probs = np.array(prediction_probs)
     prediction_probs = np.transpose(np.append([1 - prediction_probs], [prediction_probs], axis=0))
     predictions = prediction_probs.argmax(axis=1)
@@ -64,8 +64,8 @@ def print_metrics_mortality(y_true, prediction_probs, verbose=1, elog=None):
         elog.print('Confusion matrix:')
         elog.print(cf)
     elif verbose:
-        print('Confusion matrix:')
-        print(cf)
+        elog.print('Confusion matrix:')
+        elog.print(cf)
     cf = cf.astype(np.float32)
 
     acc = (cf[0][0] + cf[1][1]) / np.sum(cf)
@@ -84,6 +84,6 @@ def print_metrics_mortality(y_true, prediction_probs, verbose=1, elog=None):
                'Area Under the Precision Recall curve (AUPRC)': auprc, 'F1 score (macro averaged)': f1macro}
     if verbose:
         for key in results:
-            print('{} = {}'.format(key, results[key]))
+            elog.print('{} = {}'.format(key, results[key]))
 
     return [acc, prec0, prec1, rec0, rec1, auroc, auprc, f1macro]

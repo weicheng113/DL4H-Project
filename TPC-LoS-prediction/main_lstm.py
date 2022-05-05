@@ -62,5 +62,5 @@ if __name__ == '__main__':
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
 
     # run_lstm()
-    # run_best_cw_lstm()
-    reload_best_cw_lstm_and_test()
+    run_best_cw_lstm()
+    # reload_best_cw_lstm_and_test()

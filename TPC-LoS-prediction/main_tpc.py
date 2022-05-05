@@ -55,8 +55,10 @@ def run_best_tpc():
     c['mode'] = 'train'
     # c['n_epochs'] = 2
     c["shuffle_train"] = True
+    c['batch_size'] = 24
+    c['batch_size_test'] = 24
 
-    log_folder_path = create_folder('models/experiments/final/eICU/LoS', c.exp_name)
+    log_folder_path = create_folder('models/experiments/final/eICU/LoS_2', c.exp_name)
     tpc = TPC(config=c,
               n_epochs=c.n_epochs,
               name=c.exp_name,
@@ -72,14 +74,15 @@ def reload_best_tpc_and_test():
     c['exp_name'] = 'TPC'
     c['dataset'] = 'eICU'
     c = best_tpc(c)
+    c['batch_size_test'] = 24
 
-    log_folder_path = create_folder('./experiment_results/test', c.exp_name)
+    log_folder_path = create_folder('experiment_results/test/TPCMaskSkip', c.exp_name)
     tpc = TPC(config=c,
               n_epochs=c.n_epochs,
               name=c.exp_name,
               base_dir=log_folder_path,
               explogger_kwargs={'folder_format': '%Y-%m-%d_%H%M%S{run_number}'},
-              resume='./experiment_results/train/TPC/2022-04-30_0515561')
+              resume='./experiment_results/train/TPCMySkip/2022-05-05_0544571')
     tpc.run_test()
 
 
@@ -338,10 +341,11 @@ if __name__ == '__main__':
     # run_tpc()
     # python -W ignore:semaphore_tracker:UserWarning main_tpc.py
     # run_best_tpc()
+    reload_best_tpc_and_test()
     # run_best_tpc_multitask()
     # reload_best_tpc_multitask_and_test()
     # run_best_tpc_mse()
-    reload_best_tpc_mse_and_test()
+    # reload_best_tpc_mse_and_test()
     # run_pl_best_tpc()
     # reload_best_tpc_and_test()
     # run_best_pointwise_only()

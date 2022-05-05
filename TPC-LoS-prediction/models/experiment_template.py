@@ -1,5 +1,4 @@
 import torch
-# from eICU_preprocessing.reader import eICUReader
 from eICU_preprocessing.eicu_dataset2 import EICUReaderAdapter2
 from MIMIC_preprocessing.reader import MIMICReader
 from eICU_preprocessing.split_train_test import create_folder
@@ -7,13 +6,13 @@ import numpy as np
 from models.metrics import print_metrics_regression, print_metrics_mortality
 from trixi.experiment.pytorchexperiment import PytorchExperiment
 import os
-from models.shuffle_train import shuffle_train
 from eICU_preprocessing.run_all_preprocessing import eICU_path
 from MIMIC_preprocessing.run_all_preprocessing import MIMIC_path
 from timeit import default_timer as timer
 from datetime import timedelta
 from tqdm.auto import tqdm
 import time
+from pytorch_lightning.utilities.model_summary import ModelSummary
 
 
 # view the results by running: python3 -m trixi.browser --port 8080 BASEDIR
@@ -105,6 +104,7 @@ class ExperimentTemplate(PytorchExperiment):
         super(ExperimentTemplate, self)._start_internal()
         self.start_time = timer()
         self.epoch_start_time = timer()
+        self.elog.print(f"number of parameters: {sum(p.numel() for p in self.model.parameters() if p.requires_grad)}")
         self.elog.print(f'Experiment started at {self.format_time(time.time())}.')
 
     def _end_epoch_internal(self, epoch):

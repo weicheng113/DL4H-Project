@@ -259,7 +259,7 @@ def run_best_tpc_multitask():
     c['batch_size'] = 24
     c["batch_size_test"] = 24
 
-    log_folder_path = create_folder('models/experiments/final/eICU/multitask', c.exp_name)
+    log_folder_path = create_folder('models/experiments/final/eICU/multitask2', c.exp_name)
     tpc = TPC(config=c,
               n_epochs=c.n_epochs,
               name=c.exp_name,
@@ -341,8 +341,8 @@ if __name__ == '__main__':
     # run_tpc()
     # python -W ignore:semaphore_tracker:UserWarning main_tpc.py
     # run_best_tpc()
-    reload_best_tpc_and_test()
-    # run_best_tpc_multitask()
+    # reload_best_tpc_and_test()
+    run_best_tpc_multitask()
     # reload_best_tpc_multitask_and_test()
     # run_best_tpc_mse()
     # reload_best_tpc_mse_and_test()

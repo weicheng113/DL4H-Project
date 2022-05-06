@@ -1,0 +1,16 @@
+2022-04-09 23:08:06,068 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 89, in run
+    self.train(epoch=self._epoch_idx)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\experiment_template.py", line 110, in train
+    y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
+
+  File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\tpc_model.py", line 599, in forward
+    **kwargs)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\tpc_model.py", line 447, in temp_pointwise
+    next_X = X_combined.view(B, (point_skip.shape[1] + point_size) * (1 + temp_kernels), T)  # B * ((F + Zt + point_size) * (1 + temp_kernels)) * T
+
+2022-04-09 23:08:06,068 - INFO - RuntimeError("view size is not compatible with input tensor's size and stride (at least one dimension spans across two contiguous subspaces). Use .reshape(...) instead.")

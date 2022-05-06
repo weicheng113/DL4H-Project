@@ -1,0 +1,10 @@
+2022-05-05 10:31:33,760 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 78, in run
+    self.setup()
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\run_tpc.py", line 10, in setup
+    self.setup_template()
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\experiment_template.py", line 93, in setup_template
+    self.elog.print(str(ModelSummary(self.model)))
+
+2022-05-05 10:31:33,760 - INFO - AttributeError("'TPC' object has no attribute 'model'")

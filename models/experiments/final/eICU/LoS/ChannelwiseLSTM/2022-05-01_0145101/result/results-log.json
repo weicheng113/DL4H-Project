@@ -1,0 +1,8 @@
+[
+{"train_mad": {"data": 2.878203896694765, "label": "train_mad", "epoch": 0, "counter": 0}},
+{"train_mse": {"data": 37.05583172711866, "label": "train_mse", "epoch": 0, "counter": 0}},
+{"train_mape": {"data": 142.38742250675773, "label": "train_mape", "epoch": 0, "counter": 0}},
+{"train_msle": {"data": 1.7627891417854404, "label": "train_msle", "epoch": 0, "counter": 0}},
+{"train_r2": {"data": -0.011591350320519167, "label": "train_r2", "epoch": 0, "counter": 0}},
+{"train_kappa": {"data": 0.2257077869263927, "label": "train_kappa", "epoch": 0, "counter": 0}},
+]

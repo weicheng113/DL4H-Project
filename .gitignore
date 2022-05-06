@@ -2,11 +2,20 @@
 /#*#
 *~
 *.zip
-/TPC-LoS-prediction/eicu-collaborative-research-database-2.0/
-/TPC-LoS-prediction/paths.json
-/TPC-LoS-prediction/mimic-iv-0.4/
-/TPC-LoS-prediction/eicu-data/
+/eicu-collaborative-research-database-2.0/
+/mimic-iv-0.4
+/eICU_data/
 **/*.7z
+.DS_Store
+MIMIC_data
+__pycache__
+figures
+*.csv
+notebooks/experiment_dir
+lightning_logs
+/experiment_results/**/*.tar
+/**/.ipynb_checkpoints
+/**/*.swp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,7 @@
+2022-04-29 17:14:45,549 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 90, in run
+    self.validate(epoch=self._epoch_idx)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\experiment_template.py", line 222, in validate
+    self.config.sum_losses, self.config.loss)
+
+2022-04-29 17:14:45,549 - INFO - TypeError('loss() takes 9 positional arguments but 10 were given')

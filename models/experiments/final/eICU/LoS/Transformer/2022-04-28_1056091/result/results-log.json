@@ -1,0 +1,14 @@
+[
+{"val_mad": {"data": 3.9260783195495605, "label": "val_mad", "epoch": 0, "counter": 0}},
+{"val_mse": {"data": 33.131595611572266, "label": "val_mse", "epoch": 0, "counter": 0}},
+{"val_mape": {"data": 151.34469270706177, "label": "val_mape", "epoch": 0, "counter": 0}},
+{"val_msle": {"data": 2.63262939453125, "label": "val_msle", "epoch": 0, "counter": 0}},
+{"val_r2": {"data": -0.5632985117873783, "label": "val_r2", "epoch": 0, "counter": 0}},
+{"val_kappa": {"data": -0.03887215335617333, "label": "val_kappa", "epoch": 0, "counter": 0}},
+{"train_mad": {"data": 6.697184085845947, "label": "train_mad", "epoch": 0, "counter": 0}},
+{"train_mse": {"data": 138.2410125732422, "label": "train_mse", "epoch": 0, "counter": 0}},
+{"train_mape": {"data": 145.5156445503235, "label": "train_mape", "epoch": 0, "counter": 0}},
+{"train_msle": {"data": 3.187349796295166, "label": "train_msle", "epoch": 0, "counter": 0}},
+{"train_r2": {"data": -0.273127469529161, "label": "train_r2", "epoch": 0, "counter": 0}},
+{"train_kappa": {"data": 0.051262948649340556, "label": "train_kappa", "epoch": 0, "counter": 0}},
+]

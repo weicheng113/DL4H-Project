@@ -1,0 +1,198 @@
+2022-04-29 17:24:53,783 - INFO - TempPointConv(
+  (relu): ReLU()
+  (sigmoid): Sigmoid()
+  (hardtanh): Hardtanh(min_val=0.020833333333333332, max_val=100)
+  (msle_loss): MSLELoss(
+    (squared_error): MSELoss()
+  )
+  (mse_loss): MSELoss(
+    (squared_error): MSELoss()
+  )
+  (bce_loss): BCELoss()
+  (main_dropout): Dropout(p=0.45, inplace=False)
+  (temp_dropout): Dropout(p=0.05, inplace=False)
+  (empty_module): EmptyModule()
+  (diagnosis_encoder): Linear(in_features=293, out_features=64, bias=True)
+  (bn_diagnosis_encoder): MyBatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn_point_last_los): MyBatchNorm1d(17, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (bn_point_last_mort): MyBatchNorm1d(17, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (point_final_los): Linear(in_features=17, out_features=1, bias=True)
+  (point_final_mort): Linear(in_features=17, out_features=1, bias=True)
+  (layer_modules): ModuleDict(
+    (0): ModuleDict(
+      (temp): Conv1d(174, 1044, kernel_size=(4,), stride=(1,), groups=87)
+      (bn_temp): MyBatchNorm1d(1044, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=241, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (1): ModuleDict(
+      (temp): Conv1d(1300, 1200, kernel_size=(4,), stride=(1,), dilation=(3,), groups=100)
+      (bn_temp): MyBatchNorm1d(1200, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=1298, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (2): ModuleDict(
+      (temp): Conv1d(1469, 1356, kernel_size=(4,), stride=(1,), dilation=(6,), groups=113)
+      (bn_temp): MyBatchNorm1d(1356, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=1454, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (3): ModuleDict(
+      (temp): Conv1d(1638, 1512, kernel_size=(4,), stride=(1,), dilation=(9,), groups=126)
+      (bn_temp): MyBatchNorm1d(1512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=1610, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (4): ModuleDict(
+      (temp): Conv1d(1807, 1668, kernel_size=(4,), stride=(1,), dilation=(12,), groups=139)
+      (bn_temp): MyBatchNorm1d(1668, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=1766, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (5): ModuleDict(
+      (temp): Conv1d(1976, 1824, kernel_size=(4,), stride=(1,), dilation=(15,), groups=152)
+      (bn_temp): MyBatchNorm1d(1824, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=1922, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (6): ModuleDict(
+      (temp): Conv1d(2145, 1980, kernel_size=(4,), stride=(1,), dilation=(18,), groups=165)
+      (bn_temp): MyBatchNorm1d(1980, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=2078, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (7): ModuleDict(
+      (temp): Conv1d(2314, 2136, kernel_size=(4,), stride=(1,), dilation=(21,), groups=178)
+      (bn_temp): MyBatchNorm1d(2136, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=2234, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (8): ModuleDict(
+      (temp): Conv1d(2483, 2292, kernel_size=(4,), stride=(1,), dilation=(24,), groups=191)
+      (bn_temp): MyBatchNorm1d(2292, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (point): Linear(in_features=2390, out_features=13, bias=True)
+      (bn_point): MyBatchNorm1d(13, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (point_last_los): Linear(in_features=2781, out_features=17, bias=True)
+  (point_last_mort): Linear(in_features=2781, out_features=17, bias=True)
+)
+2022-04-29 17:24:53,794 - INFO - Config:
+2022-04-29 17:24:53,795 - INFO - {
+    "L2_regularisation": 0,
+    "alpha": 100,
+    "base_dir": "models/experiments/final/eICU/LoS/TPC",
+    "batch_norm": "mybatchnorm",
+    "batch_size": 64,
+    "batch_size_test": 32,
+    "batchnorm": "mybatchnorm",
+    "dataset": "eICU",
+    "diagnosis_size": 64,
+    "disable_cuda": false,
+    "exp_name": "TPC",
+    "intermediate_reporting": false,
+    "kernel_size": 4,
+    "labs_only": false,
+    "last_linear_size": 17,
+    "learning_rate": 0.00226,
+    "loss": "msle",
+    "main_dropout_rate": 0.45,
+    "mode": "test",
+    "model_type": "tpc",
+    "n_epochs": 2,
+    "n_layers": 9,
+    "name": "TPC",
+    "no_diag": false,
+    "no_exp": false,
+    "no_labs": false,
+    "no_mask": false,
+    "no_skip_connections": false,
+    "no_temp_kernels": 12,
+    "percentage_data": 100.0,
+    "point_size": 13,
+    "point_sizes": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+    ],
+    "save_results_csv": false,
+    "seed": 3198799390,
+    "share_weights": false,
+    "shuffle_train": false,
+    "sum_losses": true,
+    "task": "LoS",
+    "temp_dropout_rate": 0.05,
+    "temp_kernels": [
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12,
+        12
+    ]
+}
+2022-04-29 17:24:53,795 - INFO - Experiment started at 22-04-29_17:24:53.
+2022-04-29 17:24:59,281 - INFO - Sanity Checking | Validation Loss: 164.6510
+2022-04-29 17:26:10,971 - INFO - Custom bins confusion matrix:
+2022-04-29 17:26:10,971 - INFO - [[ 118 4601  323  111   62   26   15    9   23    0]
+ [  54 2724  313   91   28   20    6   12   12    0]
+ [  38 1821  206   42   23   14    9    9   10    0]
+ [  34 1240  118   36   26   25   11    3    3    0]
+ [  18  763  153   32   21   23    8    5    2    0]
+ [   2  587  177   54    9    6    8    3    1    0]
+ [   5  527  153   23   11    8    5    1    0    0]
+ [  13  511  102   13    8    4    0    0    0    0]
+ [  88 1730  314   59   25    4    0    0    0    0]
+ [  37  713  182    1    0    0    0    0    0    0]]
+2022-04-29 17:26:11,668 - INFO - Epoch: 0 | Validation Loss: 160.1665
+2022-04-29 17:26:12,239 - INFO - Custom bins confusion matrix:
+2022-04-29 17:26:12,239 - INFO - [[1593 2518  430  139   88   49   30   24   63  187]
+ [ 754 1435  281  111   47   27   13   15   45  142]
+ [ 441  991  161   68   24   24    9   12   33  106]
+ [ 228  619  147   48   22   17    9    5   14   89]
+ [ 214  415  113   47   23    8    2    3   15   78]
+ [ 186  368   70   22   13    8   13    2   15   66]
+ [  91  284   50   26   11   12    6    5   20   64]
+ [  36  165   33   23    7   10    6    5   19   82]
+ [ 220  489  197  103   64   49   25   23   96  538]
+ [ 448 1075  345  156   86   64   54   37  139  407]]
+2022-04-29 17:26:12,817 - INFO - Epoch: 0 | Train Loss: 227.7593
+2022-04-29 17:26:12,817 - INFO - Done epoch 0, spending 0:01:12.384556.
+2022-04-29 17:26:12,817 - INFO - -----------------------------------
+2022-04-29 17:27:24,382 - INFO - Custom bins confusion matrix:
+2022-04-29 17:27:24,382 - INFO - [[  54 3670  631  284  188  108   68   56  139   90]
+ [  20 2089  541  264  142   70   41   29   49   15]
+ [   8 1387  372  111   65   54   38   34   94    9]
+ [   3  878  265   86   42   54   58   20   47   43]
+ [   0  471  183   92   69   48   28   16   69   49]
+ [   0  362  159   73   74   41   30   18   51   39]
+ [   2  285  185   62   44   44   30   13   38   30]
+ [   0  265  152   71   34   19   18   20   41   31]
+ [   0  953  395  228  221  117   65   52  113   76]
+ [   0  475  218   79   37   26   10   13   55   20]]
+2022-04-29 17:27:25,064 - INFO - Epoch: 1 | Validation Loss: 158.9178
+2022-04-29 17:27:25,656 - INFO - Custom bins confusion matrix:
+2022-04-29 17:27:25,656 - INFO - [[ 435 3728  628  176   64   32   14   15   24    5]
+ [ 211 2081  348  103   38   24   20    8   24   13]
+ [ 122 1261  249   82   45   36   22   11   31   10]
+ [  71  679  218   84   48   34   18   14   24    8]
+ [  38  520  180   76   37   23    9    5   19   11]
+ [  25  473  132   57   27    7   10    5   14   13]
+ [  30  322   81   40   23   20   16    8   20    9]
+ [   2  170   57   42   26   20   18   10   19   22]
+ [   6  494  242  157  138   92   67   56  224  328]
+ [  15  699  478  271  198  137  125   91  251  546]]
+2022-04-29 17:27:26,294 - INFO - Epoch: 1 | Train Loss: 149.5517
+2022-04-29 17:27:26,294 - INFO - Done epoch 1, spending 0:01:12.197564.
+2022-04-29 17:27:26,294 - INFO - -----------------------------------
+2022-04-29 17:27:26,435 - INFO - Experiment ended at 22-04-29_17:27:26, spending 0:02:32.639674.
+2022-04-29 17:27:26,437 - INFO - Experiment exited. Checkpoints stored =)

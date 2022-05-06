@@ -1,0 +1,22 @@
+2022-05-05 05:08:02,243 - INFO -   File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/trixi/experiment/experiment.py", line 89, in run
+    self.train(epoch=self._epoch_idx)
+
+  File "/home/ubuntu/DL4H-Project/TPC-LoS-prediction/models/experiment_template.py", line 142, in train
+    for batch in tqdm(train_batches, desc="Train"):
+
+  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/tqdm/std.py", line 1195, in __iter__
+    for obj in iterable:
+
+  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 521, in __next__
+    data = self._next_data()
+
+  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1203, in _next_data
+    return self._process_data(data)
+
+  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/utils/data/dataloader.py", line 1229, in _process_data
+    data.reraise()
+
+  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/_utils.py", line 434, in reraise
+    raise exception
+
+2022-05-05 05:08:02,244 - INFO - RuntimeError('Caught RuntimeError in DataLoader worker process 0.\nOriginal Traceback (most recent call last):\n  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/utils/data/_utils/worker.py", line 287, in _worker_loop\n    data = fetcher.fetch(index)\n  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch\n    return self.collate_fn(data)\n  File "/home/ubuntu/DL4H-Project/TPC-LoS-prediction/eICU_preprocessing/eicu_dataset2.py", line 108, in collate\n    my_batch["time_series"].to(self._device),\nRuntimeError: CUDA error: out of memory\nCUDA kernel errors might be asynchronously reported at some other API call,so the stacktrace below might be incorrect.\nFor debugging consider passing CUDA_LAUNCH_BLOCKING=1.\n')

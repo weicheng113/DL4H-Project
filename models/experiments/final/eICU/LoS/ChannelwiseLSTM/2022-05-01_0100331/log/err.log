@@ -1,0 +1,13 @@
+2022-05-01 01:01:12,546 - INFO -   File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/trixi/experiment/experiment.py", line 89, in run
+    self.train(epoch=self._epoch_idx)
+
+  File "/home/ubuntu/DL4H-Project/TPC-LoS-prediction/models/experiment_template.py", line 154, in train
+    y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
+
+  File "/home/ubuntu/anaconda3/envs/dl4h-project/lib/python3.7/site-packages/torch/nn/modules/module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+
+  File "/home/ubuntu/DL4H-Project/TPC-LoS-prediction/models/lstm_model.py", line 158, in forward
+    X_final[:, :, time_before_pred:].permute(0, 2, 1).contiguous().view(B * (T - time_before_pred), -1)), dim=1)
+
+2022-05-01 01:01:12,546 - INFO - RuntimeError('CUDA out of memory. Tried to allocate 266.00 MiB (GPU 0; 14.56 GiB total capacity; 3.78 GiB already allocated; 140.50 MiB free; 8.55 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF')

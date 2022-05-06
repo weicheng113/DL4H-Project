@@ -1,0 +1,25 @@
+2022-05-05 14:12:11,741 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 89, in run
+    self.train(epoch=self._epoch_idx)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\experiment_template.py", line 155, in train
+    y_hat_los, y_hat_mort = self.model(padded, diagnoses, flat)
+
+  File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\tpc_model2.py", line 721, in forward
+    return self.forward_tpc(X=X, diagnoses=diagnoses, flat=flat, time_before_pred=time_before_pred)
+
+  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\tpc_model2.py", line 773, in forward_tpc
+    last_point_los = self.relu(self.main_dropout(self.bn_point_last_los(self.point_last_los(combined_features))))
+
+  File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\torch\nn\modules\module.py", line 1102, in _call_impl
+    return forward_call(*input, **kwargs)
+
+  File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\torch\nn\modules\linear.py", line 103, in forward
+    return F.linear(input, self.weight, self.bias)
+
+  File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\torch\nn\functional.py", line 1848, in linear
+    return torch._C._nn.linear(input, weight, bias)
+
+2022-05-05 14:12:11,741 - INFO - RuntimeError('mat1 and mat2 shapes cannot be multiplied (21120x2985 and 2781x17)')

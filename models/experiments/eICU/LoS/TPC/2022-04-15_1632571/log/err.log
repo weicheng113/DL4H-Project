@@ -1,7 +1,0 @@
-2022-04-15 16:33:22,727 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 89, in run
-    self.train(epoch=self._epoch_idx)
-
-  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\experiment_template.py", line 119, in train
-    padded, mask, diagnoses, flat, los_labels, mort_labels, seq_lengths = batch
-
-2022-04-15 16:33:22,727 - INFO - TypeError('cannot unpack non-iterable NoneType object')

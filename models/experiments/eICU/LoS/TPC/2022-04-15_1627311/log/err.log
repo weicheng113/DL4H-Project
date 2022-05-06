@@ -1,7 +1,0 @@
-2022-04-15 16:27:38,422 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 89, in run
-    self.train(epoch=self._epoch_idx)
-
-  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\experiment_template.py", line 109, in train
-    for batch_idx, batch in enumerate(self.train_datareader):
-
-2022-04-15 16:27:38,422 - INFO - TypeError("iter() returned non-iterator of type 'DataLoader'")

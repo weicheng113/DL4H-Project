@@ -1,7 +1,0 @@
-2022-04-15 16:26:43,346 - INFO -   File "C:\Users\weich\Anaconda3\envs\dl4h-project\lib\site-packages\trixi\experiment\experiment.py", line 78, in run
-    self.setup()
-
-  File "D:\git\DL4H-Project\TPC-LoS-prediction\models\run_tpc.py", line 14, in setup
-    no_flat_features=self.train_datareader.no_flat_features).to(device=self.device)
-
-2022-04-15 16:26:43,346 - INFO - AttributeError("'EICUReaderAdapter' object has no attribute 'no_flat_features'")

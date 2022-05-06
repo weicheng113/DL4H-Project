@@ -13,9 +13,10 @@ figures
 *.csv
 notebooks/experiment_dir
 lightning_logs
-/experiment_results/**/*.tar
+/**/*.tar
 /**/.ipynb_checkpoints
 /**/*.swp
+/models/experiments/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

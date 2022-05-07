@@ -69,7 +69,7 @@ python csv2lmdb.py
 To train the models, run one of following commands.
 
 ```shell
-# a. To train various TPC models. Model choices --model: [tpc, tpc-multitask, tpc-mse, pointwise-only, temp-only, tpc-no-skip]
+# a. To train various TPC models. Model choices --model: [tpc, tpc-multitask, tpc-mse, pointwise-only, temp-only, tpc-no-skip, "tpc-mask-skip"]
 python train_tpc.py --model tpc
 
 # b. To train channel-wise LSTM model.
@@ -81,8 +81,53 @@ python train_transformer.py
 
 ### Evaluation
 
+To test the models, run one of following commands.
+
+```shell
+# a. To test various TPC models. Model choices --model: [tpc, tpc-multitask, tpc-mse, pointwise-only, temp-only, tpc-no-skip, "tpc-mask-skip"]
+python test_tpc.py --model tpc
+
+# b. To test channel-wise LSTM model.
+python test_lstm.py
+
+# c. To test transformer model.
+python test_transformer.py
+```
 
 ### Results
+
+Below is the result comparison for TPC model between the original paper and our replication experiment on eICU test data.
+
+| **Model**           | **MAD**   | **MSE**   | **MAPE** | **MSLE**  | **R^2**   | **KAPPA** |
+|---------------------|-----------|-----------|----------|-----------|-----------|-----------|
+| TPC(original paper) | 1.78±0.02 |  21.7±0.5 | 63.5±4.3 | 0.70±0.03 | 0.27±0.02 | 0.58±0.01 |
+| TPC(replication)    | 1.658     | 19.539    | 49.697   | 0.458     | 0.443     | 0.710     |
+
+Below is the result comparison for TPC model vs other baseline models.
+
+| **Model**         | **MAD** | **MSE** | **MAPE** | **MSLE** | **R^2** | **KAPPA** |
+|-------------------|---------|---------|----------|----------|---------|-----------|
+| TPC               | 1.658   | 19.539  | 49.697   | 0.458    | 0.443   | 0.710     |
+| Channel-wise LSTM | 2.631   | 31.825  | 115.745  | 1.424    | 0.096   | 0.324     |
+| Transformer       | 2.592   | 30.617  | 126.388  | 1.437    | 0.127   | 0.340     |
+
+Below is the result comparison for TPC model vs other TPC variant models.
+
+| **Model**          | **MAD** | **MSE** | **MAPE** | **MSLE** | **R^2** | **KAPPA** |
+|--------------------|---------|---------|----------|----------|---------|-----------|
+| TPC<img width=100/>| 1.658   | 19.539  | 49.697   | 0.458    | 0.443   | 0.710     |
+| TPC(multitask)     | 1.241   | 16.058  | 27.520   | 0.214    | 0.542   | 0.821     |
+| TPC(no skip)       | 1.918   | 22.929  | 64.399   | 0.716    | 0.346   | 0.627     |
+| Temp. only         | 1.798   | 21.437  | 57.617   | 0.615    | 0.389   | 0.665     |
+| Point. only        | 2.665   | 31.458  | 110.025  | 1.517    | 0.106   | 0.336     |
+| TPC(MSE)           | 2.107   | 20.965  | 144.790  | 1.565    | 0.402   | 0.639     |
+
+Below is the result comparison for TPC model vs an additional TPC with mask field included in skip connection.
+
+| **Model**          | **MAD** | **MSE** | **MAPE** | **MSLE** | **R^2** | **KAPPA** |
+|--------------------|---------|---------|----------|----------|---------|-----------|
+| TPC<img width=100/>| 1.658   | 19.539  | 49.697   | 0.458    | 0.443   | 0.710     |
+| TPC(mask skip)     | 1.267   | 15.385  | 30.231   | 0.222    | 0.561   | 0.817     |
 
 ### Citation
 

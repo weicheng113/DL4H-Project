@@ -1,14 +1,14 @@
 from eICU_preprocessing.split_train_test import create_folder
 from torch.optim import Adam
-from models.tpc_model import TempPointConv
+from models.tpc_model2 import TempPointConv2
 from models.experiment_template import ExperimentTemplate
 from models.initialise_arguments import initialise_tpc_arguments
 
 
-class TPC(ExperimentTemplate):
+class TPC2(ExperimentTemplate):
     def setup(self):
         self.setup_template()
-        self.model = TempPointConv(config=self.config,
+        self.model = TempPointConv2(config=self.config,
                                    F=self.train_datareader.F,
                                    D=self.train_datareader.D,
                                    no_flat_features=self.train_datareader.no_flat_features).to(device=self.device)
@@ -24,7 +24,7 @@ if __name__=='__main__':
 
     log_folder_path = create_folder('models/experiments/{}/{}'.format(c.dataset, c.task), c.exp_name)
 
-    tpc = TPC(config=c,
+    tpc = TPC2(config=c,
               n_epochs=c.n_epochs,
               name=c.exp_name,
               base_dir=log_folder_path,

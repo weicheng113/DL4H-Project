@@ -1,4 +1,4 @@
-# Project for Deep Learning for Healthcare
+# Paper Reproduction Study - TPC Networks for LoS
 
 In this project we aim to replicate the paper ['Temporal Pointwise Convolutional Networks for Length of Stay Prediction in the Intensive Care Unit'](https://arxiv.org/pdf/2007.09483v4.pdf) by Emma Rocheteau, Pietro Li `o and
 Stephanie Hyland. The original repository for the paper can be found [here](https://github.com/EmmaRocheteau/TPC-LoS-prediction). This repository contains some modifications in order to carry out experiments.

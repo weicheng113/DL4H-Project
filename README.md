@@ -122,7 +122,7 @@ Below is the result comparison for TPC model vs other TPC variant models.
 | Point. only        | 2.665   | 31.458  | 110.025  | 1.517    | 0.106   | 0.336     |
 | TPC(MSE)           | 2.107   | 20.965  | 144.790  | 1.565    | 0.402   | 0.639     |
 
-Below is the result comparison for TPC model vs an additional TPC with mask field included in skip connection.
+Below is the result comparison for TPC model vs an additional TPC model with mask field included in skip connection.
 
 | **Model**          | **MAD** | **MSE** | **MAPE** | **MSLE** | **R^2** | **KAPPA** |
 |--------------------|---------|---------|----------|----------|---------|-----------|

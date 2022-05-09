@@ -266,13 +266,14 @@ def run():
 def run_manually():
     # run_tpc()
     # python -W ignore:semaphore_tracker:UserWarning train_tpc.py
-    run_best_tpc()
+    # run_best_tpc()
     # run_best_tpc_multitask()
     # run_best_tpc_mse()
     # run_pl_best_tpc()
     # run_best_pointwise_only()
     # run_best_temp_only()
     # run_best_tpc_no_skip()
+    run_best_tpc_mask_skip()
 
 
 if __name__ == '__main__':
@@ -280,6 +281,7 @@ if __name__ == '__main__':
     # args = parser.parse_args() to args = parser.parse_args(args=[])
     # https://stackoverflow.com/questions/48796169/how-to-fix-ipykernel-launcher-py-error-unrecognized-arguments-in-jupyter/48798075#48798075
     run()
+    # run_manually()
 
 
 
